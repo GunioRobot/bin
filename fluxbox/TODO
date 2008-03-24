@@ -1,0 +1,9 @@
+I didn't commit the styles that were in my local styles dir. None of the styles
+were mine. I got'm from tenr.de ( http://tenr.de/styles/styles014.php?a=styles )
+
+More specifically, the tarballs of all the styles he offers;
+    http://tenr.de/files/tenr.de-styles-pkg.tar.bz2
+    http://tenr.de/files/fluxmod-styles-pkg.tar.bz2
+
+I want to try and create an overlay and add these style tarballs to it. I think
+the fluxmod package is already available though.
