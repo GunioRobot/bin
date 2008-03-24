@@ -6,4 +6,12 @@ More specifically, the tarballs of all the styles he offers;
     http://tenr.de/files/fluxmod-styles-pkg.tar.bz2
 
 I want to try and create an overlay and add these style tarballs to it. I think
-the fluxmod package is already available though.
+the fluxmod package is already available though;
+
+[I] x11-themes/fluxbox-styles-fluxmod
+     Available versions:  ~20040809 ~20041024 20050128 20050128-r1
+     Installed versions:  20050128-r1(03:41:45 AM 03/22/2008)
+     Homepage:            http://www.fluxmod.dk
+     Description:         A collection of FluxBox themes from FluxMod
+
+I'm not 100% sure it's the same package...
