@@ -1,9 +1,0 @@
-#!/bin/bash
-
-THEME=$(grep -i "^.*\.stylefile:.*$" $HOME/.fluxbox/init | cut -d: -f2)
-if [ -d $THEME ]
-then
-	exec vim $THEME/theme.cfg
-else
-	exec vim $THEME
-fi
