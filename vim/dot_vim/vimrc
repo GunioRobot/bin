@@ -15,7 +15,7 @@
 :runtime! ftplugin/man.vim
 
 "
-"obscure all text via rot13 hit F3 to rot and derot the file
+"obscure all text via rot13 hit F8 to rot and derot the file
 "
 map <F8> ggVGg?
 
