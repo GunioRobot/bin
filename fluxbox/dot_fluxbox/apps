@@ -1,0 +1,58 @@
+[app] (name=fbrun)
+  [Position]	(WINCENTER)	{0 0}
+[end]
+[app] (name=pidgin)
+  [Position]	(UPPERLEFT)	{600 190}
+  [Close]	{yes}
+[end]
+[group]
+ [app] (name=xchat)
+  [Workspace]	{0}
+  [Dimensions]	{1559 1076}
+  [Position]	(UPPERLEFT)	{39 78}
+[end]
+[app] (name=mrxvt)
+  [Workspace]	{0}
+  [Dimensions]	{1559 1076}
+  [Position]	(UPPERLEFT)	{39 94}
+  [Close]	{yes}
+[end]
+[app] (name=Gecko)
+  [Workspace]	{5}
+  [Dimensions]	{1410 813}
+  [Position]	(UPPERLEFT)	{27 66}
+  [Close]	{yes}
+[end]
+[app] (name=claws-mail)
+[end]
+[app] (name=mupen64)
+  [Position]	(UPPERLEFT)	{0 150}
+[end]
+[app] (name=evince) (class=Evince)
+  [Position]	(UPPERLEFT)	{-62 60}
+[end]
+[app] (name=gimp) (class=Gimp) (role=gimp-toolbox)
+  [Workspace]	{2}
+  [Dimensions]	{238 1182}
+  [Position]	(UPPERLEFT)	{7 7}
+[end]
+[app] (name=gimp) (class=Gimp) (role=gimp-image-window)
+  [Workspace]	{2}
+  [Dimensions]	{1105 1109}
+  [Position]	(UPPERLEFT)	{248 23}
+[end]
+[app] (name=gimp) (class=Gimp) (role=gimp-dock)
+  [Workspace]	{2}
+  [Dimensions]	{250 1181}
+  [Position]	(UPPERLEFT)	{1349 -1}
+[end]
+[app] (name=klibido) (class=Klibido) (role=KLibido)
+  [Position]	(UPPERLEFT)	{52 149}
+[end]
+[app] (name=sun-awt-X11-XFramePeer) (class=org-miradi-main-Miradi)
+  [Dimensions]	{1506 639}
+  [Position]	(UPPERLEFT)	{3 31}
+[end]
+[app] (name=Navigator) (class=Firefox) (role=browser)
+  [Dimensions]	{1559 1076}
+[end]

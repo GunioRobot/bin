@@ -1,0 +1,37 @@
+------------------------------------------
+Log File: /home/miker/.fluxbox/log
+Fluxbox version: 1.0.0-gentoo
+Compiled: Mar  1 2008 16:22:55
+Compiler: GCC
+Compiler version: 4.1.2 (Gentoo 4.1.2 p1.0.2)
+
+Defaults:
+    menu: /usr/share/fluxbox/menu
+   style: /usr/share/fluxbox/styles/Clean
+    keys: /usr/share/fluxbox/keys
+    init: /usr/share/fluxbox/init
+     nls: /usr/share/fluxbox/nls
+
+Compiled options (- => disabled): 
+-DEBUG
+EWMH
+-GNOME
+IMLIB2
+KDE
+NLS
+REMEMBER
+RENDER
+SHAPE
+SLIT
+TOOLBAR
+XFT
+-XINERAMA
+XMB
+XPM
+
+------------------------------------------
+Keys: Invalid key/modifier on line 14): OnDesktop Mouse1 :HideMenus
+Keys: Invalid key/modifier on line 15): OnDesktop Mouse2 :WorkspaceMenu
+Keys: Invalid key/modifier on line 16): OnDesktop Mouse3 :RootMenu
+Keys: Invalid key/modifier on line 17): OnDesktop Mouse4 :NextWorkspace
+Keys: Invalid key/modifier on line 18): OnDesktop Mouse5 :PrevWorkspace
