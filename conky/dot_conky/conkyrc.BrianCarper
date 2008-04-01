@@ -10,7 +10,8 @@ background no
 
 # Download from http://www.proggyfonts.com/index.php?menu=download
 use_xft yes
-xftfont ProggyTinyTT:size=12
+#xftfont ProggyTinyTT:size=12
+xftfont Bitstream Vera Sans Mono:size=8
 xftalpha 1.0
 
 out_to_console no
