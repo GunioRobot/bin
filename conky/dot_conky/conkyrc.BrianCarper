@@ -1,0 +1,131 @@
+# conkyrc
+# by Brian Carper
+# http://briancarper.net
+#
+# Used with conky 1.4.2
+# This config uses lots of helper scripts that can be downloaded at my site.
+
+# I likes to start my conky manually
+background no
+
+# Download from http://www.proggyfonts.com/index.php?menu=download
+use_xft yes
+xftfont ProggyTinyTT:size=12
+xftalpha 1.0
+
+out_to_console no
+
+# in seconds
+update_interval 5
+
+total_run_times 0
+
+# This makes it transparent in KDE.
+# You MUST set your background using feh or another program 
+# which operates on the root window.
+own_window yes
+own_window_type normal
+own_window_transparent yes
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+double_buffer yes
+
+minimum_size 100 600
+
+draw_shades yes
+draw_outline no
+draw_borders no
+draw_graph_borders no
+
+default_color white
+default_shade_color black
+default_outline_color black
+
+alignment top_left
+gap_x 10
+gap_y 40
+
+no_buffers yes
+uppercase no
+
+cpu_avg_samples 2
+net_avg_samples 2
+override_utf8_locale no
+
+use_spacer no
+pad_percents 3
+
+
+# Scripts used:
+#
+# ip.cgi - on my server, returns my external IP address.
+# weather.rb - Yahoo Weather RSS parser.
+# check_mail.rb - Checks mail on a remote server.
+# now_playing.rb - Lists Amarok artist/title
+# countdown.rb - Counts the number of days until some date
+
+
+TEXT
+$nodename - $sysname $machine
+$kernel
+uptime $uptime
+load $loadavg
+
+cpu0 ${cpu cpu0}% ${cpubar cpu0}
+${cpugraph cpu0}
+cpu1 ${cpu cpu1}% ${cpubar cpu1}
+${cpugraph cpu1}
+
+mem     $mem / $memmax $alignr $memperc%
+$membar
+$memgraph
+
+swap    $swap / $swapmax $alignr $swapperc%
+$swapbar
+
+ip       ${execi 600  ruby -e "require 'net/http';Net::HTTP.get_print URI.parse('http://briancarper.net/cgi-bin/ip.cgi')"}
+local ip ${addr eth0}
+
+eth0 down ${downspeed eth0} k/s 
+${downspeedgraph eth0}
+
+eth0 up ${upspeed eth0} k/s
+${upspeedgraph eth0}
+
+/boot       ${fs_used /boot} / ${fs_size /boot}$alignr${fs_free_perc /boot}%
+${fs_bar /boot}
+/           ${fs_used /} / ${fs_size /}$alignr${fs_free_perc /}%
+${fs_bar /}
+/home       ${fs_used /home} / ${fs_size /home}$alignr${fs_free_perc /home}%
+${fs_bar /home}
+/mnt/win    ${fs_used /mnt/win} / ${fs_size /mnt/win}$alignr${fs_free_perc /mnt/win}%
+${fs_bar /mnt/win}
+/mnt/loonix ${fs_used /mnt/debian} / ${fs_size /mnt/debian}$alignr${fs_free_perc /mnt/debian}%
+${fs_bar /mnt/debian}
+
+cpu temp: ${i2c temp 1} C (${i2c tempf 1} F)
+c/s temp: ${i2c temp 2} C (${i2c tempf 2} F)
+m/b temp: ${i2c temp 3} C (${i2c tempf 3} F)
+cpu fan : ${i2c fan 1} RPM
+cha fan : ${i2c fan 2} RPM
+
+$processes processes ($running_processes running)
+name              pid     cpu%  
+ ${top name 1} ${top pid 1} ${top cpu 1}
+ ${top name 2} ${top pid 2} ${top cpu 2}
+ ${top name 3} ${top pid 3} ${top cpu 3}
+name              pid     mem%  
+ ${top_mem name 1} ${top_mem pid 1} ${top_mem mem 1}
+ ${top_mem name 2} ${top_mem pid 2} ${top_mem mem 2}
+ ${top_mem name 3} ${top_mem pid 3} ${top_mem mem 3}
+
+${execi 1800 /usr/local/bin/chester/weather.rb}
+
+${execi 300 /usr/local/bin/chester/check_mail.rb}
+
+         ${time %a %b %d %Y}
+${execi 1800 cal|perl -nle 'next if /20\d\d/;print "      $_"'}
+
+Now Playing:
+ ${execi 5 now_playing.rb}
+
+${execi 1800 /usr/local/bin/chester/countdown.rb}
