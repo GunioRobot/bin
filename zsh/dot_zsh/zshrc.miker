@@ -220,6 +220,7 @@ alias vmware='VMWARE_USE_SHIPPED_GTK=yes /opt/vmware/workstation/bin/vmware'
 alias burniso='wodim -v dev=/dev/cdrw'
 alias usepretend='sudo paludis -ip --dl-reinstall if-use-changed'
 alias usedo='sudo paludis -i --dl-reinstall if-use-changed'
+alias use='sudo vim /etc/paludis/use.conf'
 alias ketchup='ketchup -G'
 alias ri="LESS='-fREXMM' ri -f ansi"
 alias installed="eix -I --nocolor -c > /tmp/installed.txt && most /tmp/installed.txt && rm /tmp/installed.txt"
