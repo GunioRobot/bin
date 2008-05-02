@@ -1,0 +1,30 @@
+I wrote a termcap/terminfo sequence to allow me to use that mode in vim. There are a couple limitations... Vim's color numbers seem to be an unsigned 16-bit integer, so I can only use 65535 of those colors. And the number 65535 seems to be unavailable, so it's actually only 65534.
+
+I have this in my vim colors file:
+
+" It seems that old versions of vim do not support more than 256 color values?
+if version >= 700 && (&term == "konsole" || &term == "konsole-16color") " {{{
+    " The max value that seems can be passed as a ctermfg or ctermbg is 65534,
+    " otherwise this would work.
+    "
+    " set t_Co=16777216
+    " set t_AF=^[[38;2;%p1%{65536}%\/%d;%p1%{256}%\/%{255}%&%d;%p1%{255}%&%dm
+    " set t_AB=^[[48;2;%p1%{65536}%\/%d;%p1%{256}%\/%{255}%&%d;%p1%{255}%&%dm
+
+    " Color values are encoded as follows:
+    "   Number in the range of 0-65534
+    "   red = upper 5 bits * 255 / 31
+    "   green = middle 6 bits * 255 / 63
+    "   blue = lowest 5 bits * 255 / 31
+    "
+    " Vim won't store 65535 as a color number, so white is indicated as 65534 as
+    " a special case
+
+    set t_Co=65536
+    set t_AB=^[[48;2;%p1%{2048}%\/%{255}%*%{31}%\/%d;%p1%{32}%\/%{63}%&%{255}%*%{63}%\/%d;%?%p1%{65534}%=%t%{255}%e%p1%{31}%&%{255}%*%{31}%\/%;%dm
+    set t_AF=^[[38;2;%p1%{2048}%\/%{255}%*%{31}%\/%d;%p1%{32}%\/%{63}%&%{255}%*%{63}%\/%d;%?%p1%{65534}%=%t%{255}%e%p1%{31}%&%{255}%*%{31}%\/%;%dm
+endif " }}}
+
+Then I can specify colors as ctermfg=65534 ctermbg=45251 or whatever. You can specify all sorts of pretty colors for everything. I like to make the status bar red when I'm root and blue when I'm non-root as a visual aid.
+
+I actually have some scripts set up to generate my color files from a more simple template, so that it produces a color file with various conditionals to work in all kinds of circumstances (e.g. falls back on OK looking, readable defaults on less capable terminals, turns on all the fancy stuff in the GUI and modern terminals, etc.) I've thought about adding some stuff to just throw in variety; like throwing in some subtle color variations for different seasons of the year, or going online to get the weather report then matching the colors to the weather outside.
