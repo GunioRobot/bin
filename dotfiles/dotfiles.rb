@@ -7,12 +7,16 @@ module Settings
 
   DOTFILES = {
     ".vimrc" => "dot.vimrc",
-    ".vim" => "dot.vim", 
     ".zshrc" => "dot.zshrc",
     ".screenrc" => "dot.screenrc",
-    ".zkbd" => "dot.zkbd",
     ".muttrc" => "dot.muttrc",
-    ".liferea_1.4/feedlist.opml" => "dot.liferea/feedlist.opml"
+    ".Xmodmap" => "dot.Xmodmap",
+    ".xinitrc" => "dot.xinitrc",
+    ".zsh" => "dot.zsh",
+    ".Xdefaults" => "dot.Xdefaults",
+    ".conkyrc" => "dot.conkyrc",
+    ".conky" => "dot.conky"
+
   }
 end
 

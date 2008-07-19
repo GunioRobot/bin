@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Sets up your rails up in a git repository, installs haml, shoulda, make_resourceful
+# Sets up your rails up in a git repository, installs haml, shoulda, make_resourceful, shoulda_generators
 # USAGE: $0 some_app_name
 #
 # Original version found at:
@@ -94,6 +94,9 @@ if __FILE__ == $0
     announcing "Installing seedfu" do
       piston "git://github.com/mbleigh/seed-fu.git", "vendor/plugins/seedfu"
     end
-  end
 
+    announcing "Installing shoulda_generator" do
+      piston "git://github.com/technicalpickles/shoulda_generator.git", "vendor/plugins/shoulda_generator"
+    end
+  end
 end
