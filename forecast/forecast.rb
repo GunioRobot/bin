@@ -3,6 +3,7 @@ require 'rubygems'
 require 'weather/service'
 
 service = Weather::Service.new
+service.imperial = true 
 
 def mylocal(city)
   locations = service.find_location(city)
