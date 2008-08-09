@@ -20,9 +20,11 @@ puts "Dewpoint: %s" % forecast.current.dewp
 puts "Humidity: %s" % forecast.current.hmid
 puts "Visibility: %s" % forecast.current.vis
 puts 
-puts "Tomorrow's High: %s" % forecast.tomorrow.high
-puts "Tomorrow's Low: %s" % forecast.tomorrow.low
-puts "Tomorrow's Outlook: %s" % forecast.tomorrow.outlook
-puts "Tomorrow's PPCP: %s" % forecast.tomorrow.ppcp
-puts "Tommorow's Sunrise: %s" % forecast.tomorrow.sunr
-puts "Tommorow's Sunset: %s" % forecast.tomorrow.suns
+puts "Tommorow:"
+puts
+puts "High: %s" % forecast.tomorrow.high
+puts "Low: %s" % forecast.tomorrow.low
+puts "Outlook: %s" % forecast.tomorrow.outlook
+puts "Chance of Precipitation: %s" % forecast.tomorrow.ppcp
+puts "Sunrise: %s" % forecast.tomorrow.sunr
+puts "Sunset: %s" % forecast.tomorrow.suns
