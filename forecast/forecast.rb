@@ -10,7 +10,7 @@ def mylocal(city)
   puts "Matching Locations: " + locations.inspect
 end
 
-forecast = service.fetch_forecast("USME0249", 5)
+forecast = service.fetch_forecast("USME0249", 2)
 puts "Location: %s" % forecast.location_name
 puts
 puts "Temperature: %s" % forecast.current.temperature
