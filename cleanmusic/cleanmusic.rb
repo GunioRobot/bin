@@ -84,6 +84,11 @@ opts = GetoptLong.new(
 
     )
 
+if ARGV.empty? 
+  puts "Missing dir argument. Try --help"
+  exit 0
+end
+
 dstdir = nil 
 opts.each do |opt, arg|
   case opt

@@ -50,7 +50,7 @@ opts.each do |opt, arg|
   end
 end
 
-if ARGV.length == 0
+if ARGV.empty? 
   puts "Missing dir argument. Try --help"
   exit 0
 end
