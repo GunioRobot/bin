@@ -246,8 +246,16 @@ map = {
 	"zw" => "Zimbabwe",
 }
 
+if ARGV.empty?
+  $stderr.puts "You must enter a country code to search for\n"
+  $stderr.puts "# ./whcctld.rb us"
+  exit 1
+end
+
 if map["#{ARGV}"]
   puts "#{ARGV} is " + map["#{ARGV}"] + ".\n"
+  exit 1
 elsif
   puts "#{ARGV} does not exist.\n"
+  exit 1
 end
