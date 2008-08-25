@@ -1,0 +1,44 @@
+V Tips
+
+Now that we can read on to something functional. :) A few tips I picked up along the line.
+
+* Vim has great help documentation. :help topic can be done on about anything.
+
+* Vim has tab-completion for entering commands and bash-completion for files (e.g. :w ~/Desktop/myblog.txt)
+
+* The mouse can be used in Vim for some functions, but it needs to be enabled. I use this setting as I find that moused in visual mode can be distractive.
+
+set mouse=nic
+
+    * To be able to select text with the mouse in this mode hold the shift key
+
+A few other tips:
+
+[[      start of the file
+]]      end of the file
+
+I       Insert at beginning of line
+A       Append to end of line
+
+Tab-mode rules:
+
+vim -p doc1 doc2
+gt      go through tabs
+:tabnew To open new tab
+
+Append a file:
+
+:w >> ~/My-lousy-document
+
+Check spelllinng:
+
+:setlocal spell spelllang=en_us
+:setlocal nospell
+]s      next word
+[s      previous word
+z=      word suggestions
+
+Spelling can be mapped to a key if used frequently enough, in my ~/.vimrc I mapped spelling the the F7 key:
+
+map <F7> <Esc>:setlocal spell spelllang=en_us
+map <S-F7> <Esc>:setlocal nospell

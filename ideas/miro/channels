@@ -1,0 +1,14 @@
+#Mike Reynolds April 24, 2008
+
+So set up a website where there are groups of feeds that you can "tune in to" 
+in miro. Each group of feeds will be treated as 1 channel. 
+
+channels will have say all of the diggnation episodes. (would we have to store 
+them?) So you pull up the diggnation channel, and you will see a guide. Look at
+guide1.png. Top row is year, next row is month, next row is day of the week.
+
+Allow users to add their own channels.
+
+Should probably have a category system. 
+
+

@@ -1,0 +1,298 @@
+#! /bin/bash
+#
+# tcng:       Starts the tcng Server
+#
+# Version:      @(#) /etc/rc.d/init.d/tcng 0.1
+#
+# chkconfig: 2345 90 10
+# description: Starts and stops the tcng at boot time and shutdown.
+#
+# processname: tcng
+#
+# created : from Raptor
+#
+# 2003-03-15: by Martin A. Brown <mabrown@securepipe.com>
+#  - minor/cosmetic changes: removed an eval, changed looping
+#  - added favorite shell functions, gripe/abort, replacing gprintf
+#  - altered the way configuration file was used
+#  - used a bit of awk instead of three binaries to get device names;
+#    there has to be an even more elegant solution!
+#  - added a syntax check on tcng config file before "start"
+# 2003-03-31: by Martin A. Brown <mabrown@securepipe.com>
+#  - better handling of tcstats and tcdebug
+#  - more debugging information
+#  - handle root/dsmark and ingress qdiscs correctly
+#  - add "$0 flush" and "$0 panic"
+#
+
+# -- my favorite shell functions
+#
+gripe  () { echo "$@" >&2;       }
+abort  () { gripe "$@"; exit 1;  }
+inform () { test "$tcdebug" -ge "$INFORM" && gripe "$@" ; }
+debug  () { test "$tcdebug" -ge "$DEBUG"  && gripe "$@" ; }
+
+# -- debugging globals
+#
+DEBUG=2
+INFORM=1
+
+# -- path to the tc and tcc commands; assuming this script is only run
+#    by root with a sensible $PATH; otherwise, hardcode the paths
+#    to tc and tcc in /etc/sysconfig/tcng
+#
+tc=$( which tc )
+# -- path to the tcc command
+#
+tcc=$( which tcc )
+
+# -- source the system-wide tcng configuration file; it must set AT LEAST
+#    the variable TCCONF
+#
+sysconfig=/etc/sysconfig/tcng
+. $sysconfig
+
+# -- add a few sanity variables, just in case:
+#
+tcstats=${tcstats:-no}
+
+# -- this can (and should) be set for preference in $sysconfig
+#
+tcdebug=${tcdebug:-0}
+
+test "$tcstats" = "yes"  && stats="-s"
+
+debug "About to test configuration file specifications"
+test ! -z "$TCCONF" || abort "\$TCCONF must contain path to config; got $TCCONF."
+test -r "$TCCONF"   || abort "\$TCCONF must be readable: $TCCONF is not."
+
+offMsg=OFF
+onMsg=ON
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# - - - - - - - - - -
+  isup () {
+# - - - - - - - - - -
+#
+# -- this function returns 1 if the qdisc is located on the specified
+#    device
+#
+  local d=$1
+  local qtype=$2
+  if test "$qtype" = "ingress" ; then
+    $tc qdisc show dev $d 2>/dev/null | grep -q $qtype && return 1
+    # -- no ingress qdisc, return safely
+    return 0
+  fi
+  #
+  # -- sadly, we break our nice symmetry, because the "root" qdisc
+  #    can sometimes be a dsmark qdisc....so; let's account for it
+  #
+  $tc qdisc show dev $d 2>/dev/null | grep -q root   && return 1
+  $tc qdisc show dev $d 2>/dev/null | grep -q dsmark && return 1
+  #
+  # -- Yowza!  Found no qdiscs.
+  #
+  return 0 ;
+  #
+}
+
+# - - - - - - - - - -
+  exists_qdisc () {       # -- ingress or root qdisc exist?  return 1
+# - - - - - - - - - -
+#
+  local d=$1
+  isup $d ingress
+  test "$?" -gt "0" && return 1
+  isup $d root
+  test "$?" -gt "0" && return 1
+  return 0 ;
+}
+
+# - - - - - - - - - -
+  clearqdisc () {
+# - - - - - - - - - -
+#
+# -- this function tests to see if a qdisc exists, and
+#    removes it if found.
+#
+  local d=$1
+  local qtype=$2
+  isup $d $qtype
+  if test "$?" -eq "1" ; then
+    inform "Removing $qtype qdisc: $d"
+    $tc qdisc del dev $d $qtype 2>/dev/null
+  else
+    inform "No $qtype qdisc running on device: $d"
+  fi
+}
+
+# - - - - - - - - - -
+  clearingress () {       # -- remove an ingress qdisc
+# - - - - - - - - - -
+#
+  local d=$1
+  clearqdisc $d ingress
+}
+
+# - - - - - - - - - -
+  clearroot () {          # -- remove a root qdisc
+# - - - - - - - - - -
+#
+  local d=$1
+  clearqdisc $d root
+}
+
+# - - - - - - - - - -
+  syntax () {
+# - - - - - - - - - -
+#
+# -- this function tests the configuration file specified in
+#    /etc/sysconfig/tcng to see if tcc understands it.  If so,
+#    it returns 0, and processing continues.
+#
+  tcc -c $TCCONF >/dev/null 2>&1
+  test "$?" != "0" && return 1;
+  return 0 ;
+}
+
+# - - - - - - - - - -
+  start () {
+# - - - - - - - - - -
+#
+# -- main loop to bring up traffic control on interfaces
+#
+    test "$#" -ne "0" && local devs=$@
+    echo -n $"Starting tcng services: "
+    #
+    # -- first, make sure that the configuration makes sense to tcc
+    #
+    debug "About to check syntax on tcng config file ${TCCONF##*/}"
+    syntax $TCCONF
+    if test "$?" != "0" ; then
+      failure ; echo  # -- for the pretty red output
+      gripe "tcc failed to parse $TCCONF, try:"
+      abort "  \"tcc -c $TCCONF\""
+    fi
+    #
+    # -- then, make sure no traffic control is currently in use on
+    #    any devices specified in the tcng configuration
+    #
+    debug "About to test for active qdiscs on devices in ${TCCONF##*/}"
+    for d in $( $tcc $TCCONF | awk '/^tc/{ print $5 }' | sort | uniq ) ; do
+      exists_qdisc $d
+      if test "$?" -ne "0" ; then
+        gripe "Found active traffic control on device $d."
+        gripe "Device $d is used in $TCCONF."
+        gripe "Remove traffic control with \"$0 stop $d\"."
+        abort "Consider also \"$0 restart\" or \"$0 flush\"."
+      fi
+    done
+    #
+    # -- now, actually parse the tcng config file and spit it through
+    #    a little loop, which executes the tc commands one at a time
+    #
+    $tcc $TCCONF | grep -Ev "^#|^$" | sed -e "s/^tc//" | {
+      while read cmd ; do
+        #
+        # -- inform the user we are adding qdiscs to devices when new
+	#    devices are found
+        #
+        thisdev=$( echo $cmd | awk '/root/{print $4}' )
+        test "$thisdev" = "" || inform "Adding root qdisc to $thisdev"
+        thisdev=$( echo $cmd | awk '/ingress/{print $4}' )
+        test "$thisdev" = "" || inform "Adding ingress qdisc to $thisdev"
+        #
+        # -- debug, if necessary...this will print the command just prior
+        #    to execution.
+        #
+        debug "Executing: $cmd"
+        $tc $cmd
+      done
+    }
+    success  # -- this is sort of silly, but some people like the pretty
+             #    green "OK" to make them feel warm and fuzzy at night
+    echo ;
+}
+
+
+# - - - - - - - - - -
+  stop () {
+# - - - - - - - - - -
+#
+  test "$#" -ne "0" && local devs=$@
+  echo -n $"Stopping tcng services: "
+  for d in $devs; do
+    inform "Stopping traffic control on: $d"
+    clearingress  $d
+    clearroot     $d
+  done	
+  success  # -- this is sort of silly, but some people like the pretty
+           #    green "OK" to make them feel warm and fuzzy at night
+  echo ;
+}
+
+
+# - - - - - - - - - -
+  status () {
+# - - - - - - - - - -
+#
+  if [ "$1" ]; then devs=$*; fi	
+  for d in $devs; do
+    exists_qdisc $d
+    if test "$?" -gt "0" ; then
+      gripe "traffic control on $d: [$onMsg]" ;
+    else
+      gripe "traffic control on $d: [$offMsg]" ;
+    fi
+  done		
+}
+
+# - - - - - - - - - -
+  show () {
+# - - - - - - - - - -
+#
+  what=all
+  if test "$#" -gt "0" ; then
+    case "$1" in
+      qdisc|class|filter) what=$1 ; shift  ;;
+    esac
+    test "$#" -gt "0" && local devs=$@
+  fi
+  for d in $devs; do
+    isup $d root
+    if test "$?" -gt "0" ; then
+      for OBJ in qdisc class filter ; do
+        test "$what" = "all" || test "$what" = "$OBJ" \
+          && $tc $stats $OBJ show dev $d
+      done
+    fi
+  done ;
+}
+
+# -- this little pile of shell gets a list of the "REAL" devices on
+#    the system.  Just a touch easier than "ip -o link", which we
+#    should probably be using.
+#
+devs=$( ifconfig -a | awk '/^\w+:/ || /^lo/ {next}; /^[a-z]/{print $1}' )
+command=$1
+shift;
+
+case "$command" in
+  start)         start         ;;
+  flush|panic)	 stop   $devs  ;;   # -- stop ALL traffic control
+  stop)	         stop   $@     ;;
+  status)        status $@     ;;
+  show)          show   $@     ;;	
+  restart)       stop   $@
+	         start  $@     ;;
+  *)
+	gripe "Usage: ${0##*/}"
+	gripe "  ${0##*/} {start|stop|status|restart} [ device [ ... ] ]"
+	abort "  ${0##*/} show [ qdisc|class|filter ] [ device [ ...] ]"
+	abort "  ${0##*/} show [ device [ ...] ]"
+esac
+
+exit 0

@@ -1,0 +1,105 @@
+# User specific menu-entries can go in ~/.fluxbox/usermenu
+#
+[begin] (Fluxbox 1.0.0-gentoo)
+[encoding] {UTF-8}
+    [exec] (mrxvt) {mrxvt} </usr/share/pixmaps/mrxvt.xpm>
+    [exec] (xterm) {xterm} </usr/share/pixmaps/gksu-root-terminal.png>
+    [exec] (firefox) {firefox} </usr/share/pixmaps/firefox-icon.png>
+    [exec] (ROX) {rox} </usr/share/pixmaps/ROX-Filer.png>
+    [exec] (dolphin) {dolphin} </usr/share/icons/hicolor/32x32/apps/dolphin.png>
+    [exec] (Claws) {claws-mail} </usr/share/pixmaps/claws-mail.png>
+    [exec] (xchat) {xchat} </usr/share/pixmaps/xchat.png>
+    [exec] (azureus) {azureus} </usr/share/pixmaps/azureus.png>
+    [exec] (ktorrent) {ktorrent} </usr/share/apps/ktorrent/www/default/icon.png>
+    [exec] (gmpc) {gmpc} </usr/share/pixmaps/gmpc.png>
+    [exec] (opera) {opera} </usr/share/pixmaps/opera.xpm>
+    [exec] (gajim) {gajim} </usr/share/pixmaps/gajim.png>
+    [exec] (pidgin) {pidgin} </usr/share/pixmaps/pidgin/emotes/default/hypnotized.png>
+    [exec] (liferea) {liferea} </usr/share/pixmaps/firefox-icon-unbranded.png>
+    [exec] (virtual box) {VirtualBox} </usr/share/pixmaps/virtualbox.png>
+    [exec] (k3b) {k3b} </usr/share/icons/gentoo/l33t/l33t_PUR_cd.png>
+  [separator]
+    [exec] (Run) {fbrun -font 10x20 -fg grey -bg black -title run}
+  [separator]
+    [submenu] (Office)
+        [exec] (writer) {/usr/bin/oowriter} </usr/share/pixmaps/ooo-writer.png>
+        [exec] (calc) {/usr/bin/oocalc} </usr/share/pixmaps/ooo-calc.png>
+        [exec] (impress) {/usr/bin/ooimpress} </usr/share/pixmaps/ooo-impress.png>
+        [exec] (dia) {dia} </usr/share/pixmaps/dia_gnome_icon.png>
+    [end]
+    [submenu] (Net) {}
+        [exec] (gftp) {gftp} </usr/share/pixmaps/gftp.png>
+        [exec] (filezilla) {filezilla} </usr/share/pixmaps/filezilla.png>
+        [exec] (pan) {pan} </usr/share/pixmaps/pan.png>
+        [exec] (klibido) {klibido} </usr/share/pixmaps/KLibido.gif>
+        [submenu] (Browsers)
+          [exec]   (firefox) {firefox} </usr/share/pixmaps/mozilla-firefox-bin-icon.png>
+          [exec]   (dillo) {dillo} 
+          [exec]   (vncviewer) {vncviewer} </usr/share/pixmaps/vncviewer.png>
+          [exec]   (links-graphic) {links -driver x fluxbox.org} </usr/share/pixmaps/links.xpm>
+          [exec]   (opera) {env QT_XFT=true opera} 
+          [exec]   (links) {mrxvt -e links fluxbox.org} </usr/share/pixmaps/links.xpm>
+          [exec]   (lynx) {mrxvt -e lynx fluxbox.org} 
+        [end]
+    [end]
+    [submenu] (Editors) {}
+        [exec] (gvim) {gvim}
+        [exec] (gedit) {gedit}
+        [exec] (xedit) {xedit}
+        [exec] (kword) {kword}
+        [exec] (kwrite) {kwrite}
+        [exec] (kate) {kate}
+    [end]
+    [submenu] (FTP)
+        [exec]   (gftp) {gftp} </usr/share/gftp/gftp.xpm>
+        [exec]   (ncftp) {mrxvt -e ncftp} 
+        [exec]   (ftp) {mrxvt -e ftp} 
+        [exec]   (yafc) {mrxvt -e yafc} 
+    [end]
+    [submenu] (Multimedia)
+        [submenu] (Graphics)
+            [exec]   (gimp) {gimp} 
+            [exec]   (inkscape) {inkscape} </usr/share/pixmaps/inkscape.png>
+            [exec]   (xv) {xv} 
+        [end]
+        [submenu] (Video)
+            [exec]   (gmplayer) {gmplayer} </usr/share/pixmaps/mplayer.xpm>
+        [end]
+    [end]
+    [submenu] (Utilities)
+        [exec] (Reload .Xdefaults) {xrdb -load /home/miker/.Xdefaults} </usr/share/icons/gentoo/l33t/l33t_DES_skullred.png>
+        [exec] (htop) {mrxvt -e htop} </usr/share/pixmaps/htop.png>
+    [end]
+[submenu] (fluxbox menu)
+      [config] (Configure) 
+[submenu] (Styles)
+      [include] (/usr/share/fluxbox/menu.d/styles/) 
+      [exec] (Edit Current Style) {xterm -e /home/miker/.fluxbox/currentstyle} </usr/share/icons/gentoo/l33t/l33t_DES_death.png>
+[end]
+[submenu] (Background) {Set the Background}
+      [include] (~/.fluxbox/background_menu)
+[end]
+      [workspaces] (Workspace List) 
+[submenu] (Tools)
+      [exec] (Window name) {xprop WM_CLASS|cut -d \" -f 2|xmessage -file - -center} 
+      [exec] (Screenshot - JPG) {import screenshot.jpg && display -resize 50% screenshot.jpg} 
+      [exec] (Screenshot - PNG) {import screenshot.png && display -resize 50% screenshot.png} 
+      [exec] (Run) {fbrun -font 10x20 -fg grey -bg black -title run} 
+      [reconfig] (Reload config)
+      [exec] (Edit Current Style) {xterm -e /home/miker/.fluxbox/currentstyle} </usr/share/icons/gentoo/l33t/l33t_DES_death.png>
+[end]
+[submenu] (Window Managers)
+      [restart] (twm) {twm} 
+      [restart] (fvwm) {fvwm} 
+      [restart] (fvwm2) {fvwm2} 
+[end]
+      [commanddialog] (Fluxbox Command) 
+      [reconfig] (Reload config) 
+      [restart] (Restart) 
+      [exec] (About) {(fluxbox -v; fluxbox -info | sed 1d) 2> /dev/null | xmessage -file - -center} 
+      [exec] (Regen Menu) {/usr/bin/fluxbox-generate_menu -is -ds}
+      [separator] 
+      [exit] (Exit) 
+[end]
+[endencoding]
+[end]

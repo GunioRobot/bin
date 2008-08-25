@@ -1,0 +1,148 @@
+set imap_user = 'reynoldsmike@gmail.com'
+set sleep_time = 0
+set imap_pass = 'evilive123'
+set spoolfile = imaps://imap.gmail.com:993/INBOX
+set folder = imaps://imap.gmail.com:993
+set record="imaps://imap.gmail.com/[Gmail]/Sent Mail"
+set postponed="imaps://imap.gmail.com/[Gmail]/Drafts"
+set imap_check_subscribed=yes
+set imap_list_subscribed=yes
+set ascii_chars=yes
+set attribution="On %d, %n wrote:\n"
+set thorough_search
+set auto_tag=yes
+set signature=~/.signature
+set autoedit=yes
+set delete=yes
+set reply_to=yes
+set confirmappend=no
+set edit_headers=no
+set envelope_from=yes
+set fast_reply=yes
+#set mbox="!"
+set nouse_domain 
+set metoo
+set mbox="imaps://imap.gmail.com[Gmail]/All Mail"
+#set mbox=+mbox
+#set mbox_type=Maildir
+set header_cache="~/.tmp/mutt/hcache"
+set message_cachedir="~/.tmp/mutt/msgcache/"
+set certificate_file="~/.tmp/mutt/certs"
+#set folder=$HOME/mbox
+set from="Mike Reynolds <reynoldsmike@gmail.com>"
+set include
+set imap_keepalive = 15
+set timeout = 15 
+set mail_check = 10
+set check_new
+set mark_old=no
+set markers=no
+set menu_context=5
+set menu_move_off=yes
+set menu_scroll=yes
+set metoo=no
+set pager_context=10
+set pager_index_lines=10
+set pager_stop=yes
+set postpone=no
+#set postponed=$HOME/mbox/draft
+set quote_regexp="^([ \t]*[|>:])+"
+set read_inc=50
+set recall=no
+#set record=$HOME/mbox/outbox
+set resolve=no
+set smtp_url="smtps://reynoldsmike:evilive123@smtp.gmail.com"
+set smart_wrap
+set wrapmargin
+set sort=threads
+set check_mbox_size=yes
+set sort_aux=date-received
+set strict_threads
+set sort_browser=reverse-date
+set sort_alias=alias
+#folder-hook . "set sort=threads"
+#folder-hook . "set sort_aux=date-received"
+set suspend=no
+set tilde=yes
+set use_from=yes
+set user_agent=yes
+set wait_key=no
+set write_bcc=no
+set move=no
+set editor="vim +/^$ ++1 +':setf mail' +':set spell spelllang=en' +'set tw=72'"
+set query_command="abook --mutt-query '%s'"
+set mask = '!(^\.)|(\.log$)|(\.lst$)|(\.cache$)'
+set tmpdir=$HOME/.tmp/mutt
+set mime_forward=yes
+set mime_forward_rest=yes
+set send_charset="us-ascii:utf-8"
+set charset=utf-8
+set followup_to
+set honor_followup_to=yes
+set date_format="!%l:%M %p - %A, %B %e"
+set index_format="[%Z] %[!%Y-%m-%d %I:%M %p] %-15.15F [%L] %s %> [%c]"
+set hdr_format="%4C %Z %{%m/%d} %-15.15F (%4c) %s"
+set attach_format="%u%D%I %t%4n %T%.40d%> [%.7m/%.10M, %.6e%?C?, %C?, %s] "
+set forward_format="[Fwd] %s (from: %a)"
+set mailcap_path="~/.mailcap"
+set mh_purge=yes
+set folder_format="[%N] [%F %u] [%f] %> [%s]"
+set status_on_top
+
+alternates (mike@marskreations.com|yourusernamehere@gmail.com|reynolds.mike@gmail.com|miker@lizardhost.co.uk|)
+
+ignore *
+unignore from: date subject to cc reply-to bcc
+unignore organization organisation x-mailer: x-newsreader: user-agent:
+hdr_order From Date: From: To: Cc: Subject:
+
+bind  pager /   search
+bind  pager L   list-reply
+bind  pager b   bounce-message
+bind  pager f   forward-message
+bind  pager m   mail
+bind  pager a   reply       # 'a' is for "answer"
+bind  pager g   group-reply
+bind  pager j   next-line
+bind  pager k   previous-line
+bind  pager :   enter-command
+
+bind  index x   sync-mailbox
+bind  index a   tag-prefix
+bind  index \;  tag-entry
+bind browser <return> view-file
+
+bind  pager  p previous-undeleted
+bind  pager  n next-undeleted
+bind  pager  \n next-unread
+bind compose \n send-message
+bind compose s send-message
+
+bind  pager   <up>     previous-line
+bind  pager   <down>   next-line
+bind  pager   <left>   exit
+bind  pager   <right>  view-attachments
+bind  attach  <left>   exit
+bind  attach  <right>  view-attach
+bind  index   <right>  display-message
+macro index   <left>   "c?"
+bind  browser <right>  select-entry
+bind  browser <left>   exit
+
+macro attach W <save-entry><kill-line>/home/gregf/downloads/attachments/
+macro attach E <save-entry><kill-line>/home/gregf/downloads/attachments/<enter>
+
+macro index \cb |urlview\n 'call urlview to extract URLs out of a message'
+macro pager \cb |urlview\n 'call urlview to extract URLs out of a message'
+
+macro index S "| spamassassin -d | sa-learn --spam --single --no-sync" "Spamassassin -- learn as Spam"
+macro pager S "| spamassassin -d | sa-learn --spam --single --no-sync" "Spamassassin -- learn as Spam"
+macro index H "| spamassassin -d | sa-learn --ham --single --no-sync" "Spamassassin -- learn as noSpam"
+macro pager H "| spamassassin -d | sa-learn --ham --single --no-sync" "Spamassassin -- learn as noSpam"
+macro pager A | 'abook --add-email'\n
+
+source ~/.mutt/colors.rc
+source ~/.mutt/mailboxes.rc
+source ~/.mutt/views.rc
+source ~/.mutt/hooks.rc
+source ~/.mutt/mutt.gpg
