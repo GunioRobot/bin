@@ -26,3 +26,6 @@ puts "High: %s" % forecast.tomorrow.high
 puts "Low: %s" % forecast.tomorrow.low
 puts "Outlook: %s" % forecast.tomorrow.outlook
 puts "Chance of Precipitation: %s" % forecast.tomorrow.ppcp
+puts "Sunrise: %s" % forecast.tomorrow.sunrise
+puts "Sunset: %s" % forecast.tomorrow.sunset
+puts ""
