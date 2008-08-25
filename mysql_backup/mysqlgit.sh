@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# --lock-all-tables < use this on final backups
+# need to create a .my.cnf file in your home directory to set mysql user/pass.
+#
+# .my.cnf example
+# [client]
+# user = backups
+# password = somepasshere
+#
+# Run via crontab
+#
+# Every 3 hours
+#
+# 00 0-23/3 * * * /path/to/mysqlgit.sh
+#
+
+
 #
 # Edit These
 #
@@ -12,7 +28,6 @@ GROUP="gregf"
 NOW=$(date +"%m-%d-%Y %I:%M%p")
 
 # cd to the script dir to make sure files are put here
-# --lock-all-tables < use this on final backups
 cd ${BACKUP}
  
 DATABASES="$(mysql -h ${HOSTNAME} -Bse 'SHOW DATABASES')"
@@ -25,7 +40,7 @@ do
     # loop through the tables in the database
     for TABLE in ${TABLES[@]}
     do
-        mysqldump --compress --add-locks -h ${HOSTNAME} "$DB" "$TABLE" > "${DB}/${TABLE}.sql"
+        nice -n 19 mysqldump --compress --add-locks -h ${HOSTNAME} "$DB" "$TABLE" > "${DB}/${TABLE}.sql"
     done
 done
 
