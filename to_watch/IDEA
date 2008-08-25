@@ -1,0 +1,16 @@
+I want to list good stuff to watch or lisen to
+sub categories for each "genre"
+there will be a tv_shows.conf for example
+in tv_shows.conf there will be something like
+S1E12-show_name /storage/show_name/show_name.mpg
+
+So SeasonXEpisodeY and where on the filesystem it's located.
+
+Hmmm thinking outloud here. What about doing m:/storage/ and g:/storage ?
+Should prolly have m: and g: (or whatever identifiers we decide on) point
+to the respective location. 
+
+can even do it for say hulu links
+
+I'm thinking we could eventually link it to a rails app that we could script 
+up a tv on and could then "watch" tv on the puter.
