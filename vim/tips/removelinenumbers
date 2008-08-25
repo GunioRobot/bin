@@ -1,0 +1,6 @@
+THe following will remove line numbers that sometimes come with a copy
+from somewhere on line. The numbers have to have a space following the number.
+
+%s/^[0-9]*\s//
+
+

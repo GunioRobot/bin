@@ -1,0 +1,108 @@
+# I'm leaving you for zsh!
+#export PS1="{\u@\h:\w}"
+#PS1="\e[0;36m+\e[1;36m-(\e[0;36m\u@\e[0;36m\h\e[1;36m)-(\e[0;36m\#/\e[0;36m\l\e[1;36m)-(\e[0;36m\t:\e[0;36m\d\e[1;36m)-\n\e[0;36m+\e[1;36m-(\e[0;36m\$:\e[0;36m\w\e[1;36m)-\e[0;0m\n"
+
+#PS1="{\u@\h:\w}"
+# create a nice prompt
+case $TERM in
+    xterm*|screen|linux|cygwin|*rxvt)
+      PS1='{\u@\h \[\e[31;1m\]\w\[\e[0m\]} '
+PS1='[\u@\h \[\e[31;1m\]\w\[\e[0m\]]: '
+      ;;
+    *)
+      PS1='\s\v\$ '
+      ;;
+esac
+#############################exports############################################
+#NNTPSERVER='news.verizon.net' && export NNTPSERVER
+EDITOR=/usr/bin/vim && export EDITOR
+#############################aliases############################################
+#import -window $windowname filename.png
+
+#bash-completion stuff
+[ -f /etc/profile.d/bash-completion ] && . /etc/profile.d/bash-completion
+
+#alias vi to vim
+alias vi='vim'
+
+fortune -c
+
+# Run devtodo if not root,  to annoy me to do something.
+if [ -x /usr/bin/devtodo ]; then 
+  if [ "`id -u`" != "0" ]; then
+      /usr/bin/devtodo
+  fi  
+fi
+
+
+if [ -f /etc/bash_completion ]; then
+
+    . /etc/bash_completion
+
+fi
+
+#get keyboard/mouse scancodes
+alias getscancode="xev"
+
+#disable tests
+export SKIP_FUNCTIONS="test"
+
+#help debug nvidia/X errors
+alias xlog="sudo grep --binary-files=without-match --color -nsie '(EE)' -e '(WW)' /var/log/Xorg.0.log"
+
+export LANG=en_US.utf8
+export LC_CTYPE=en_US.utf8
+
+#Start Xnest :2 -a (To allow new stuff to use the nested X)
+alias xnest='Xnest :2 -ac'
+#startx /etc/X11/xinit/xinitrc.xfce -- :1
+
+# alock is nice in that it's a screen saver of sorts and locks with no apparent
+# way to unlock :)
+alias lock='alock -auth pam -bg blank:color=white'
+
+alias whats_installed="eix -I --nocolor -c > /tmp/installed.txt && vimpager /tmp/installed.txt && rm /tmp/installed.txt"
+
+#fix vmware
+alias vmware='VMWARE_USE_SHIPPED_GTK=yes vmware'
+
+#format nice output
+mps()
+{
+   /bin/ps $@ -u $USER -o pid,%cpu,%mem,bsdtime,command ;
+}
+
+alias rm='/usr/bin/shred -fuz'
+
+alias manc='man -P /usr/bin/most $1'
+
+#to mount and unmount cdrom
+CDROM="/mnt/cdrom1"
+   alias mcd='mount $CDROM && cd $CDROM && ls'
+   alias ucd='cd && umount $CDROM && eject && sleep 10 && eject -t'
+   # Eject CD:
+   alias ecd='eject $CDROM'
+   # Close CD tray:
+   alias ccd='eject -t $CDROM'
+#Same for dvd
+DVDROM="/mnt/dvdr"
+   alias mdvd='mount $DVDROM && cd $DVDROM && ls'
+   alias udvd='cd && umount $DVDROM && eject && sleep 10 && eject -t'
+   # Eject DVD:
+   alias edvd='eject $DVDROM'
+   # Close DVD tray:
+   alias cdvd='eject -t $DVDROM'
+
+#Burning a bin/cue
+DEV="/dev/cdrom1"
+SPEED="32"
+   alias burncue='cdrdao write --device $DEV --speed $SPEED --eject --driver generic-mmc '
+#par2repair
+    alias pa2='par2repair'
+
+#Create DVD
+alias crdvd='mkisofs -dvd-video -o'
+
+# To verify PGP signatures of freshly downloaded Slackware packages:
+    alias gpgv="for i in ./*.tgz ; do echo $i ; gpg --no-secmem-warning --verify $i.asc $i ; echo ; done" 
+

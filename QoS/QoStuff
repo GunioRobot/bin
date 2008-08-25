@@ -1,0 +1,50 @@
+Quality of service
+
+Linux
+
+Priority queuing with tc to optimize VoIP. See the full example on voip-info.org or www.howtoforge.com. Suppose VoIP uses udp on ports 10000:11024 and device eth0 (could also be ppp0 or so). The following commands define the QoS to three queues and force the VoIP traffic to queue 1 with QoS 0x1e (all bits set). The default traffic flows into queue 3 and QoS Minimize-Delay flows into queue 2.
+
+# tc qdisc add dev eth0 root handle 1: prio priomap 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 0
+# tc qdisc add dev eth0 parent 1:1 handle 10: sfq
+# tc qdisc add dev eth0 parent 1:2 handle 20: sfq
+# tc qdisc add dev eth0 parent 1:3 handle 30: sfq
+# tc filter add dev eth0 protocol ip parent 1: prio 1 u32 \
+  match ip dport 10000 0x3C00 flowid 1:1          # use server port range
+  match ip dst 123.23.0.1 flowid 1:1              # or/and use server IP
+
+
+Status and remove with
+
+# tc -s qdisc ls dev eth0                         # queue status
+# tc qdisc del dev eth0 root                      # delete all QoS
+
+
+Calculate port range and mask
+
+The tc filter defines the port range with port and mask which you have to calculate. Find the 2^N ending of the port range, deduce the range and convert to HEX. This is your mask. Example for 10000 -> 11024, the range is 1024.
+
+# 2^13 (8192) < 10000 < 2^14 (16384)              # ending is 2^14 = 16384
+# echo "obase=16;(2^14)-1024" | bc                # mask is 0x3C00
+
+
+
+FreeBSD
+
+The max link bandwidth is 500Kbit/s and we define 3 queues with priority 100:10:1 for VoIP:ssh:all the rest.
+
+# ipfw pipe 1 config bw 500Kbit/s 
+# ipfw queue 1 config pipe 1 weight 100
+# ipfw queue 2 config pipe 1 weight 10
+# ipfw queue 3 config pipe 1 weight 1
+# ipfw add 10 queue 1 proto udp dst-port 10000-11024
+# ipfw add 11 queue 1 proto udp dst-ip 123.23.0.1 # or/and use server IP
+# ipfw add 20 queue 2 dsp-port ssh
+# ipfw add 30 queue 3 from me to any              # all the rest
+
+
+Status and remove with
+
+# ipfw list                                       # rules status
+# ipfw pipe list                                  # pipe status
+# ipfw flush                                      # deletes all rules but default
+
