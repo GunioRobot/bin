@@ -18,7 +18,12 @@
 
 require 'getoptlong'
 require 'rdoc/usage'
+# Needed for clean method
+require 'find'
+require 'fileutils'
 
+# File types we want to remove if we find.
+DO_NOT_WANT=%w[*.txt *.svf *.nfo *.jpg *.jpeg *.png *.gif *.bmp]
 
 #TODO Refactor gsubs into a function?
 #TODO Verbose flag
@@ -72,7 +77,13 @@ class Rename
   end
 
   def clean
-    #TODO recursivly remove certain file types, txt, jpg, nfo, sfv
+    #TODO recursivly remove certain file types, use filetypes from array above. 
+    Find.find(@dname) do |path|
+      if File.basename(path) == '.txt'
+        FileUtils.remove_file(path, true)
+        Find.prune
+      end
+    end
   end
 
 end
