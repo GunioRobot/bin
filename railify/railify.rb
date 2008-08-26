@@ -91,8 +91,8 @@ if __FILE__ == $0
       piston "git://github.com/thoughtbot/shoulda.git", "vendor/plugins/shoulda"
     end
 
-    announcing "Installing seedfu" do
-      piston "git://github.com/mbleigh/seed-fu.git", "vendor/plugins/seedfu"
+    announcing "Installing factory girl on rails" do
+      piston "git://github.com/technicalpickles/factory_girl_on_rails.git", "vendor/plugins/factory_girl_on_rails"
     end
 
     announcing "Installing shoulda_generator" do

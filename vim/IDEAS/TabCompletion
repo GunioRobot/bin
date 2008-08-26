@@ -1,3 +1,0 @@
-in the current tab complete vimscript I'm using it can tab complete any word as
-long as it is in the current file. Maybe there is a way to let it read or 
-"think" that a dictionary is there. this will allow the tab completion of any word.
