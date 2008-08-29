@@ -7,14 +7,13 @@ require 'net/scp'
 dotfiles = %w[.zshrc .vimrc .zsh .vim .dir_colors .zkbd]
 servers = %w[gila web miker ibiblio nlfg isp4cheap]
 
-
 # Leave alone!
 list_dotfiles = dotfiles.join(", ")
 servers.each do |server|
     puts "Transfering #{list_dotfiles} to #{server}"
     dotfiles.each do |dotfile|
       Net::SCP.start("#{server}", :user) do |scp|
-        scp.upload! "#{dotfile}", "#{dotfile}", :recursive => true
+        scp.upload! "#{dotfile}", "~", :recursive => true
     end
   end
 end
