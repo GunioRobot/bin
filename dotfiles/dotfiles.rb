@@ -1,6 +1,11 @@
 #!/usr/bin/ruby
 # vim: set sw=2 sts=2 et tw=80 :
 
+#TODO Allow user to override dotfiles and servers array via cmd line opt.
+#TODO Verbose option, no verbosity by default (for cron)
+#TODO Maybe use benchmark and time the process via optional parameter
+#TODO Use getoptlong
+
 require 'net/scp'
 
 # Edit these
