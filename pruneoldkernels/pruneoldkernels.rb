@@ -10,3 +10,4 @@
 #6. ask if we should open grub.conf in $EDITOR
 #7. Accept command line option for specify kernel versions to remove
 #8. Accept command line option to keep specific kernel versions
+#9. Hook into paludis to remove old kernels from system
