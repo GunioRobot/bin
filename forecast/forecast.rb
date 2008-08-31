@@ -19,6 +19,7 @@ puts "Windspeed: %s" % forecast.current.wind.speed + " Gust " + forecast.current
 puts "Dewpoint: %s" % forecast.current.dewp
 puts "Humidity: %s" % forecast.current.hmid
 puts "Visibility: %s" % forecast.current.vis
+puts "Outlook: %s" % forecast.current.outlook
 puts
 puts "Tommorow:"
 puts
