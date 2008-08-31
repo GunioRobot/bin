@@ -3,7 +3,7 @@ require 'rubygems'
 require 'weather/service'
 
 service = Weather::Service.new
-service.imperial = true 
+service.imperial = true
 
 def mylocal(city)
   locations = service.find_location(city)
@@ -19,7 +19,7 @@ puts "Windspeed: %s" % forecast.current.wind.speed + " Gust " + forecast.current
 puts "Dewpoint: %s" % forecast.current.dewp
 puts "Humidity: %s" % forecast.current.hmid
 puts "Visibility: %s" % forecast.current.vis
-puts 
+puts
 puts "Tommorow:"
 puts
 puts "High: %s" % forecast.tomorrow.high
@@ -30,4 +30,3 @@ puts "Chance of Precipitation: %s" % forecast.tomorrow.ppcp
 # TODO Format date how I want later on
 #puts "Sunrise: %s" % forecast.tomorrow.sunrise
 #puts "Sunset: %s" % forecast.tomorrow.sunset
-puts ""
