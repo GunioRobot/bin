@@ -11,7 +11,7 @@
 #   show help
 #
 # -s --srcdir </storage/music/>
-#  Top level directory to where files/directories are located 
+#  Top level directory to where files/directories are located
 #
 # -v --version
 #   Display current version
@@ -28,17 +28,15 @@ DO_NOT_WANT=%w[*.txt *.svf *.nfo *.jpg *.jpeg *.png *.gif *.bmp]
 #TODO Refactor gsubs into a function?
 #TODO Verbose flag
 #TODO cp instead of mv as option
-#TODO option to specify dstdir
-#TODO rename dstdir to srcdir
-class Rename 
-  attr_accessor :dname 
-  
-  def initialize(dname)  
+class Rename
+  attr_accessor :dname
+
+  def initialize(dname)
        @dname = dname
-  end  
- 
+  end
+
   #TODO Rename directories only
-  #TODO Make Recursive 
+  #TODO Make Recursive
   def dren
     dirs = Dir.entries(@dname)
     dirs.each do |d|
@@ -57,7 +55,7 @@ class Rename
   end
 
   #TODO Rename files only
-  #TODO Make Recursive 
+  #TODO Make Recursive
   def fren
     files = Dir.entries(@dname)
     files.each do |f|
@@ -77,7 +75,7 @@ class Rename
   end
 
   def clean
-    #TODO recursivly remove certain file types, use filetypes from array above. 
+    #TODO recursivly remove certain file types, use filetypes from array above.
     Find.find(@dname) do |path|
       if File.basename(path) == '.txt'
         FileUtils.remove_file(path, true)
@@ -95,12 +93,12 @@ opts = GetoptLong.new(
 
     )
 
-if ARGV.empty? 
+if ARGV.empty?
   puts "Missing dir argument. Try --help"
   exit 0
 end
 
-dstdir = nil 
+srcdir = nil
 opts.each do |opt, arg|
   case opt
     when '--help'
@@ -116,3 +114,4 @@ end
 
 music = Rename.new(srcdir)
 music.dren
+music.clean

@@ -3,7 +3,8 @@
 # Edit these
 $dotfiles = %w[.zshrc .vimrc .zsh .vim .dir_colors .zkbd]
 $servers = %w[gila web miker ibiblio nlfg isp4cheap]
-$location = "/home/gregf"
+# You can specify any path you wish
+$location = ENV["HOME"]
 $verbose = false
 
 #TODO Rescue from some possible errors.
