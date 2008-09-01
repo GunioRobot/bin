@@ -18,16 +18,16 @@
 
 require 'getoptlong'
 require 'rdoc/usage'
-# Needed for clean method
 require 'find'
 require 'fileutils'
 
 # File types we want to remove if we find.
-DO_NOT_WANT=%w[*.txt *.svf *.nfo *.jpg *.jpeg *.png *.gif *.bmp]
+$do_not_want = %w[.txt .svf .nfo .jpg .jpeg .png .gif .bmp .url]
 
 #TODO Refactor gsubs into a function?
 #TODO Verbose flag
 #TODO cp instead of mv as option
+#TODO Rename files based off of id3 tags if available.
 class Rename
   attr_accessor :dname
 
@@ -37,49 +37,58 @@ class Rename
 
   #TODO Rename directories only
   #TODO Make Recursive
-  def dren
-    dirs = Dir.entries(@dname)
-    dirs.each do |d|
-      next if d == "." or d == ".."
-      oldDir = @dname + d
-      d = d.gsub(/^[a-z]|\s+[a-z]/) { |a| a.upcase.strip.to_s }
-      d = d.gsub(/^[a-z]|\_+[a-z]/) { |a| a.upcase.strip.to_s }
-      d = d.gsub(/^[a-z]|\-+[a-z]/) { |a| a.upcase.strip.to_s }
-      d = d.gsub(/^[0-9]|\s+[0-9]/) { |a| a.upcase.strip.to_s }
-      d = d.gsub(" ", "")
-      d = d.gsub("_", "")
-      d = d.gsub("!", "")
-      d = d.gsub("?", "")
-      File.rename(oldDir, @dname + d)
+  def directory_rename
+      Find.find(@dname) do |path|
+        next if File.file?(path)
+        dir = File.dirname(path)
+        dir = dir.gsub(/^[a-z]|\s+[a-z]/) { |a| a.upcase.strip.to_s }
+        dir = dir.gsub(/^[a-z]|\_+[a-z]/) { |a| a.upcase.strip.to_s }
+        dir = dir.gsub(/^[a-z]|\-+[a-z]/) { |a| a.upcase.strip.to_s }
+        dir = dir.gsub(/^[0-9]|\s+[0-9]/) { |a| a.upcase.strip.to_s }
+        dir = dir.gsub(" ", "")
+        dir = dir.gsub("_", "")
+        dir = dir.gsub("!", "")
+        dir = dir.gsub("?", "")
+        dir = dir.gsub("[", "")
+        dir = dir.gsub("]", "")
+        dir = dir.gsub(",", "")
+        dir = dir.gsub(".", "")
+        File.rename(path, dir)
     end
   end
 
-  #TODO Rename files only
-  #TODO Make Recursive
-  def fren
-    files = Dir.entries(@dname)
-    files.each do |f|
-      next if f == "." or f == ".."
-      oldFile = @dname + f
-      f = f.gsub(/^[a-z]|\s+[a-z]/) { |a| a.upcase.strip.to_s }
-      f = f.gsub(/^[0-9]|\-+[0-9]/) { |a| a.upcase.strip.to_s }
-      f = f.gsub(/^[a-z]|\_+[a-z]/) { |a| a.upcase.strip.to_s }
-      f = f.gsub(/^[a-z]|\-+[a-z]/) { |a| a.upcase.strip.to_s }
-      f = f.gsub(/-{2,}/, "")
-      f = f.gsub(" ", "")
-      f = f.gsub("_", "")
-      f = f.gsub("?", "")
-      f = f.gsub("!", "")
-      File.rename(oldFile, @dname + f)
+  def file_rename
+    Find.find(@dname) do |path|
+      next if File.directory?(path) or path == "."  or path == ".."
+      file = File.basename(path)
+      dir = File.dirname(path)
+      file = file.gsub(/^[a-z]|\s+[a-z]/) { |a| a.upcase.strip.to_s }
+      file = file.gsub(/^[0-9]|\-+[0-9]/) { |a| a.upcase.strip.to_s }
+      file = file.gsub(/^[a-z]|\_+[a-z]/) { |a| a.upcase.strip.to_s }
+      file = file.gsub(/^[a-z]|\-+[a-z]/) { |a| a.upcase.strip.to_s }
+      file = file.gsub(/-{2,}/, "")
+      file = file.gsub(" ", "")
+      file = file.gsub("-", "")
+      file = file.gsub("_", "")
+      file = file.gsub("?", "")
+      file = file.gsub("!", "")
+      file = file.gsub(")", "")
+      file = file.gsub("(", "")
+      file = file.gsub(",", "")
+      file = file.gsub("]", "")
+      file = file.gsub("[", "")
+      File.rename(path, dir + '/' + file)
     end
   end
 
   def clean
-    #TODO recursivly remove certain file types, use filetypes from array above.
-    Find.find(@dname) do |path|
-      if File.basename(path) == '.txt'
-        FileUtils.remove_file(path, true)
-        Find.prune
+    $do_not_want.each do |dnw|
+      Find.find(@dname) do |file|
+        next if File.directory?(file)
+        if File.extname(file) == dnw
+          FileUtils.remove_file(file, true)
+          Find.prune
+        end
       end
     end
   end
@@ -113,5 +122,9 @@ opts.each do |opt, arg|
 end
 
 music = Rename.new(srcdir)
-music.dren
+puts "Renaming Directories.."
+music.directory_rename # Broken!
+puts "Renaming Files.."
+music.file_rename
+puts "Cleaning up files.."
 music.clean
