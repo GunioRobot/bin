@@ -1,16 +1,14 @@
 #!/usr/bin/ruby
 # vim: set sw=2 sts=2 et tw=80 :
 
-#TODO mkdir structure /screenshots/08.26.08/
-#TODO take screenshot using scrot, stick in directory.
-#TODO Naming scheme desktop-date
-#TODO cmd line options, fullscreen, select, naming convention of image
+#TODO Add that ability to choose between fullscreen and select
+#TODO Check if we should user .ssh/config or provided info.
 
-require 'getoptlong'
 require 'configatron'
 require 'net/ssh'
 require 'net/scp'
 require 'ping'
+require 'fileutils'
 
 ### EDIT These ###
 configatron do |config|
@@ -31,13 +29,21 @@ configatron do |config|
     ssh.port = "159"
   end
   # Set this to anything you want.
-  config.tmpdir = ENV["TMP"]
+  config.tmpdir = ENV["TMP"] # No trailing slash!
   config.clean_tmpdir = true
-  config.date_format = "%M/%D/%Y"
+  config.filename_date = "%m.%d.%y"
+  config.directory_date = "%m.%Y"
   config.filename = "desktop"
 end
 
 # Do not touch anything below this line unless you know what your doing.
+
+# Build some filenames, and paths based off of the info the user entered above.
+time = Time.now
+directory_date = time.strftime("#{configatron.directory_date}")
+filename_date = time.strftime("#{configatron.filename_date}")
+filename = "#{configatron.tmpdir}/#{configatron.filename}-#{filename_date}.#{configatron.scrot.format}"
+send_to = "#{configatron.ssh.remote_path}/#{directory_date}"
 
 # Check if the server is alive before we start.
 if !Ping.pingecho(configatron.ssh.server)
@@ -48,18 +54,18 @@ end
 # Make sure our directory structure exists before we try to send the file there.
 Net::SSH.start(configatron.ssh.server, configatron.ssh.user,
               :port => configatron.ssh.port) do |ssh|
-  ssh.exec("mkdir -p #{configatron.ssh.remote_path}") # prints the results to $stdout
+  ssh.exec("mkdir -p #{send_to}")
 end
 
 # Build command for scrot.
 if configatron.scrot.multihead
   scrot_command = [ "#{configatron.scrot.bin}", "-d", "#{configatron.scrot.delay}",
                   "-q", "#{configatron.scrot.quality}", "-m",
-                  "screeny.#{configatron.scrot.format}"].join("\s")
+                  "#{filename}"].join("\s")
 else
   scrot_command = [ "#{configatron.scrot.bin}", "-d", "#{configatron.scrot.delay}",
                   "-q", "#{configatron.scrot.quality}",
-                  "screeny.#{configatron.scrot.format}"].join("\s")
+                  "#{filename}"].join("\s")
 end
 
 # Take the screenshot.
@@ -68,5 +74,12 @@ system(scrot_command)
 # Upload the screen shot to ssh.remote_path using scp.
 Net::SCP.start(configatron.ssh.server, configatron.ssh.user,
               :port => configatron.ssh.port) do |scp|
-  scp.upload!("./screeny.#{configatron.scrot.format}", "#{configatron.ssh.remote_path}")
+  scp.upload!("#{filename}", "#{send_to}")
+end
+
+# Clean up any files we may have made.
+if configatron.clean_tmpdir
+  if File.file?("#{filename}")
+    FileUtils.remove_file("#{filename}", true)
+  end
 end
