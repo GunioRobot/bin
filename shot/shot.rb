@@ -3,23 +3,25 @@
 
 #TODO Add that ability to choose between fullscreen and select
 #TODO Check if we should user .ssh/config or provided info.
+#TODO try to get Escape.shell_command(["#{cmd}"]) going.
 
 require 'configatron'
 require 'net/ssh'
 require 'net/scp'
 require 'ping'
-require 'fileutils'
+#require 'escape'
 
 ### EDIT These ###
+# DO NOT quote true/false values, makes them a string rather than true/false.
 configatron do |config|
   config.namespace(:scrot) do |scrot|
     scrot.bin = "/usr/bin/scrot"
     scrot.delay = "5"
-    scrot.multihead = "false"
+    scrot.multihead = false
     scrot.quality = "85"
     scrot.format = "png"
     scrot.type = "fullscreen" # or select (click a window on runtime to snap)
-    scrot.border = "true" # Grab window border if using select
+    scrot.border = true # Grab window border if using select
   end
   config.namespace(:ssh) do |ssh|
     ssh.server = "gregf.org"
@@ -68,7 +70,8 @@ else
                   "#{filename}"].join("\s")
 end
 
-# Take the screenshot.
+# Escape our shell cmd, then take the screenshot.
+#escaped_command = Escape.shell_command(["#{scrot_command}"])
 system(scrot_command)
 
 # Upload the screen shot to ssh.remote_path using scp.
@@ -80,6 +83,6 @@ end
 # Clean up any files we may have made.
 if configatron.clean_tmpdir
   if File.file?("#{filename}")
-    FileUtils.remove_file("#{filename}", true)
+    File.delete("#{filename}")
   end
 end
