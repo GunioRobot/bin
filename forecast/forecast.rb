@@ -11,8 +11,6 @@ def mylocal(city)
 end
 
 forecast = service.fetch_forecast("USME0249", 2)
-puts "Location: %s" % forecast.location_name
-puts
 puts "Temperature: %s" % forecast.current.temperature
 puts "Feels Like: %s" % forecast.current.flik
 puts "Windspeed: %s" % forecast.current.wind.speed + " Gust " + forecast.current.wind.gust
@@ -27,7 +25,3 @@ puts "High: %s" % forecast.tomorrow.high
 puts "Low: %s" % forecast.tomorrow.low
 puts "Outlook: %s" % forecast.tomorrow.outlook
 puts "Chance of Precipitation: %s" % forecast.tomorrow.ppcp
-
-# TODO Format date how I want later on
-#puts "Sunrise: %s" % forecast.tomorrow.sunrise
-#puts "Sunset: %s" % forecast.tomorrow.sunset
