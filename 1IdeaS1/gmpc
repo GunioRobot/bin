@@ -1,0 +1,17 @@
+It would be very nice if gmpc added the ability to write out tracks that it
+organizes into their respective directories.
+
+Example;
+
+/music/f/FrankZappa/AlbumFoo/[tracks 1..13 of AlbumFoo,
+tracks 1..10 of AlbumBar, and tracks 1..14AlbumBaz]
+
+In gmpc's meta browser, it shows the albums in order, and I think
+track info/song titles are based on id3tags and perhaps what is downloaded
+from the internet?
+
+I would like to be able to select tracks 1-10 of AlbumBar and maybe rt click
+-> send to own dir or somesuch. 'send to dir' in general and letting the user
+pick a dir to send the selected file(s) to  may be more useful.
+
+
