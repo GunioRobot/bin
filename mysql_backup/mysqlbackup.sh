@@ -28,8 +28,8 @@ fi
 
 cd ${TMPDIR}
 
-if [ $PWD != ${BACKUP} ]; then
-    echo "Can't chdir to ${BACKUP}. Check permissions and retry"
+if [ $PWD != ${TMPDIR} ]; then
+    echo "Can't chdir to ${TMPDIR}. Check permissions and retry"
     exit 0
 fi
 
@@ -43,8 +43,7 @@ do
     # loop through the tables in the database
     for TABLE in ${TABLES[@]}
     do
-        #mysqldump --compress --add-locks -h ${HOSTNAME} "$DB" "$TABLE" > "${DB}/${TABLE}.sql"
-        echo
+        mysqldump --compress --add-locks -h ${HOSTNAME} "$DB" "$TABLE" > "${DB}/${TABLE}.sql"
     done
 done
 
