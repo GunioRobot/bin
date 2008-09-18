@@ -5,7 +5,7 @@
 #
 
 HOSTNAME="gila.lizardhost.co.uk"
-BACKUP="/home/gregf/mysql_backups"
+BACKUP="/storage/mysql_backups"
 TMPDIR=${BACKUP}/$$
 USER="gregf"
 GROUP="gregf"
@@ -54,8 +54,9 @@ for MTABLE in *; do
     ARCHIVE="${MTABLE}-${NOW}.gz"
     nice -n19 ionice -c3 tar -cf ${BACKUP}/${DAY}/${ARCHIVE} ${MTABLE} 
     nice -n19 ionice -c3 lzma -q -z -8 ${BACKUP}/${DAY}/${ARCHIVE}
-    rm -rf ${TMPDIR}
 done
+
+rm -rf ${TMPDIR}
 
 #
 # Set sane permissions
