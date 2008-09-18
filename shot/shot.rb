@@ -13,30 +13,24 @@ require 'ping'
 
 ### EDIT These ###
 # DO NOT quote true/false values, makes them a string rather than true/false.
-configatron do |config|
-  config.namespace(:scrot) do |scrot|
-    scrot.bin = "/usr/bin/scrot"
-    scrot.delay = "5"
-    scrot.multihead = false
-    scrot.quality = "85"
-    scrot.format = "png"
-    scrot.type = "fullscreen" # or select (click a window on runtime to snap)
-    scrot.border = true # Grab window border if using select
-  end
-  config.namespace(:ssh) do |ssh|
-    ssh.server = "gregf.org"
-    ssh.remote_path = "~/blog/shared/stuff/screenshots/"
-    # If these are left blank it will read settings from ~/.ssh/config
-    ssh.user = "gregf"
-    ssh.port = "159"
-  end
-  # Set this to anything you want.
-  config.tmpdir = ENV["TMP"] # No trailing slash!
-  config.clean_tmpdir = true
-  config.filename_date = "%m.%d.%y"
-  config.directory_date = "%m.%Y"
-  config.filename = "desktop"
-end
+configatron.scrot.bin = "/usr/bin/scrot"
+configatron.scrot.delay = "5"
+configatron.scrot.multihead = false
+configatron.scrot.quality = "85"
+configatron.scrot.format = "png"
+configatron.scrot.type = "fullscreen" # or select (click a window on runtime to snap)
+configatron.scrot.border = true # Grab window border if using select
+configatron.ssh.server = "gregf.org"
+configatron.ssh.remote_path = "~/blog/shared/stuff/screenshots/"
+# If these are left blank it will read settings from ~/.ssh/config
+configatron.ssh.user = "web16_gregf"
+configatron.ssh.port = "159"
+# Set this to anything you want.
+configatron.tmpdir = ENV["TMP"] # No trailing slash!
+configatron.clean_tmpdir = true
+configatron.filename_date = "%m.%d.%y"
+configatron.directory_date = "%m.%Y"
+configatron.filename = "desktop"
 
 # Do not touch anything below this line unless you know what your doing.
 
