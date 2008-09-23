@@ -1,18 +1,18 @@
 #!/usr/bin/ruby
 
-def pluralize(action)
+def adjectivize(action)
   case action
-  when "install": "installing"
-  when "clean": "cleaning"
-  when "fetch": "fetching"
-  when "uninstall": "uninstalling"
+  when "install": "installed"
+  when "clean": "cleaned"
+  when "fetch": "fetched"
+  when "uninstall": "uninstalled"
   else "Error will robinson, error!"
   end
 end
 
 LOG_FILE="/var/log/paludis.log"
 ACTIONS="clean|uninstall|fetch|install"
-SYNC_PATTERN="#{ACTIONS} of package"
+SYNC_PATTERN="finished #{ACTIONS} of package"
 status = %w[]
 if File.file?(LOG_FILE)
   File.open(LOG_FILE, "r") do |f|
@@ -26,4 +26,4 @@ end
 
 outcome = status.last.match("#{ACTIONS}").to_s
 
-puts pluralize(outcome)
+puts adjectivize(outcome)
