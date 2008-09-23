@@ -14,9 +14,7 @@ if File.file?(LOG_FILE)
   end
 end
 
-outcome = status.last
-outcome = outcome.match("[0-9]{1,3} of [0-9]{1,3}")
-outcome = outcome.to_s
+outcome = status.last.match("[0-9]{1,3} of [0-9]{1,3}").to_s
 outcome = outcome.gsub("of", "")
 outcome = outcome.split(" ")
 puts 100.0*outcome[0].to_i/outcome[1].to_i
