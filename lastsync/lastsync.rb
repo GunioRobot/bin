@@ -1,7 +1,5 @@
 #!/usr/bin/ruby
 
-require 'date'
-
 LOG_FILE="/var/log/paludis.log"
 SYNC_PATTERN="finished sync of repository gentoo"
 sync_date = %w[]
