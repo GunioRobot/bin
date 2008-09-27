@@ -1,1 +1,5 @@
-find my todo and put it here :P
+getfacl on important directories, whole system is probably to much.
+    1. Use -R -L
+    2. /var, /home, /pub, /etc, /lib, /boot?
+Run fix-paludis-perms
+

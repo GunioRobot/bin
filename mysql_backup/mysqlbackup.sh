@@ -6,7 +6,7 @@
 
 HOSTNAME="gila.lizardhost.co.uk"
 BACKUP="/storage/mysql_backups"
-TMPDIR=${BACKUP}/$$
+TMPDIR=${BACKUP}/.tmp/$$
 USER="gregf"
 GROUP="gregf"
 NOW=$(date +"%H%M")

@@ -2,7 +2,7 @@
 
 # Edit these
 $dotfiles = %w[.zshrc .vimrc .zsh .vim .dir_colors .zkbd]
-$servers = %w[gila web miker ibiblio nlfg isp4cheap]
+$servers = %w[quad gila web miker ibiblio nlfg isp4cheap]
 # You can specify any path you wish
 $location = ENV["HOME"]
 $verbose = false
