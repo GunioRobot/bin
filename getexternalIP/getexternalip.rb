@@ -1,10 +1,51 @@
 #!/usr/bin/env ruby
+#== Synopsis
+#
+# getexternalIP: Fetches your external IP from ipchicken.com, used for boxes behind a firewall.
+#
+# = Usage
+#
+# imgmove [OPTION] ... 
+# -h --help
+#   show this.
+#
+# -c --conky
+#  Display just the ip to stdout, used for conky.
+#
+# Running with no options will copy your external IP to the clipboard.
+#
 
-string = %w[]
-require 'open-uri'
-open("http://www.ipchicken.com/") { |fm|
-  string = fm.read
-  @myip = string.scan(/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/).uniq.join("\n")
-}
+require 'getoptlong'
+require 'rdoc/usage'
 
-puts @myip
+def grab_address
+  string = %w[]
+  require 'open-uri'
+  open("http://www.ipchicken.com/") { |fm|
+    string = fm.read
+    @myip = string.scan(/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/).join("\n")
+  }
+  return @myip
+end
+
+opts = GetoptLong.new(
+      [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
+      [ '--conky', '-c', GetoptLong::NO_ARGUMENT ]
+    )
+
+opts.each do |opt, arg|
+  case opt
+    when '--help'
+      RDoc::usage
+      exit 1
+    when '--conky'
+      puts grab_address
+      exit 1
+  end
+end
+
+if ARGV.empty? 
+  addy = grab_address
+  system("echo #{addy} | xclip")
+  exit 1 
+end
