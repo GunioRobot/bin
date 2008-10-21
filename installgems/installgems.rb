@@ -6,9 +6,16 @@
 # as I find I need them. No will I do that. Run this and it should take
 # care of it for you. Pretty much hardcoded to my gentoo install for now.
 # Going to add support for freebsd soon.
+#
+# TODO test if system packages are already installed.
+#      If they are remove them from the array.
+#      Then install whats left if any.
+# TODO Rescue from possible errors
+# TODO Perty status messages/colors
 
 GEM="/usr/bin/gem"
 GEM_OPTS="--no-ri --no-rdoc"
+GEM_UPDATE="update --system"
 PALUDIS="/usr/bin/paludis"
 PALUDIS_OPTS="-i"
 PACKAGES = %w[dev-ruby/rubygems dev-libs/oniguruma media-gfx/imagemagick].join(' ')
@@ -182,4 +189,5 @@ yahoo-weather
 ZenTest].join(' ')
 
 %x[#{PALUDIS} #{PALUDIS_OPTS} #{PACKAGES}]
+%x[#{GEM} #{GEM_OPTS} #{GEM_UPDATE}]
 %x[#{GEM} #{GEM_OPTS} #{GEMS}]
