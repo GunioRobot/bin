@@ -1,0 +1,40 @@
+#!/bin/bash
+
+SUBVERSION_URL="svn://jdolan.dyndns.org/quake2world"
+RSYNC_URL="rsync://satgnu.net/quake2world quake2world"
+RSYNC_OPTS="-avz --delete"
+SUDO="/usr/bin/sudo"
+SVN="/usr/bin/svn"
+RSYNC="/usr/bin/rsync"
+BUILD_LOCATION="${TMP}/quakeworld/"
+
+if [[ -d ${BUILD_LOCATION} ]]; then
+    rm -rf ${BUILD_LOCATION}
+else
+    mkdir -p ${BUILD_LOCATION}
+fi
+
+function compile {
+    cd ${BUILD_LOCATION}
+    ${SVN} co ${SUBVERSION_URL} quake2world
+    cd quake2world
+    autoreconf -i
+    ./configure
+    make 
+    ${SUDO} make install
+}
+
+function get_maps {
+    cd /usr/local/share
+    ${SUDO} ${RSYNC} ${RSYNC_OPTS} ${RSYNC_URL}
+}
+
+function cleanup {
+    if [ -d ${BUILD_LOCATION} ]; then
+        rm -rf ${BUILD_LOCATION}
+    fi
+}
+
+compile
+get_maps
+cleanup
