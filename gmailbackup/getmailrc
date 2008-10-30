@@ -1,0 +1,15 @@
+[options]
+verbose = 0 
+delete = false 
+message_log = ~/.getmail/log
+
+[retriever]
+type = SimpleIMAPSSLRetriever
+server = imap.gmail.com
+username = username 
+password = password
+#mailboxes = ("INBOX", "INBOX.spam", "mailing-lists.getmail-users")
+
+[destination]
+type = Maildir
+path = ~gregf/Maildir/
