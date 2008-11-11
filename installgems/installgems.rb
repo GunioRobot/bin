@@ -16,11 +16,13 @@
 GEM="/usr/bin/gem"
 GEM_OPTS="--no-ri --no-rdoc"
 GEM_UPDATE="update --system"
+GEM_CMD="#{GEM} install #{GEM_OPTS}"
 PALUDIS="/usr/bin/paludis"
 PALUDIS_OPTS="-i"
 PACKAGES = %w[dev-ruby/rubygems dev-libs/oniguruma media-gfx/imagemagick].join(' ')
 
 GEMS = %w[
+listrophy-suprails
 abstract 
 actionmailer 
 actionpack 
@@ -186,8 +188,14 @@ wirble
 wxruby 
 xml-simple 
 yahoo-weather 
-ZenTest].join(' ')
+ZenTest].join(" ")
 
-%x[#{PALUDIS} #{PALUDIS_OPTS} #{PACKAGES}]
-%x[#{GEM} #{GEM_OPTS} #{GEM_UPDATE}]
-%x[#{GEM} #{GEM_OPTS} #{GEMS}]
+system("#{GEM} update --system")
+system("#{GEM_CMD} rubygems-update")
+
+PACKAGES.each do |package|
+  system("#{PALUDIS} #{PALUDIS_OPTS} #{package}")
+end
+GEMS.each do |gem|
+  system("#{GEM_CMD} #{gem}")
+end

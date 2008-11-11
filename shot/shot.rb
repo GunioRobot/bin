@@ -18,12 +18,11 @@ configatron.scrot.delay = "5"
 configatron.scrot.multihead = false
 configatron.scrot.quality = "85"
 configatron.scrot.format = "png"
-configatron.scrot.type = "fullscreen" # or select (click a window on runtime to snap)
 configatron.scrot.border = true # Grab window border if using select
 configatron.ssh.server = "gregf.org"
-configatron.ssh.remote_path = "~/blog/shared/stuff/screenshots/"
+configatron.ssh.remote_path = "~/www/stuff/screenshots/"
 # If these are left blank it will read settings from ~/.ssh/config
-configatron.ssh.user = "web16_gregf"
+configatron.ssh.user = "gregf"
 configatron.ssh.port = "159"
 # Set this to anything you want.
 configatron.tmpdir = ENV["TMP"] # No trailing slash!
