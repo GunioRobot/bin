@@ -2,7 +2,7 @@
 
 SUBVERSION_URL="svn://jdolan.dyndns.org/quake2world"
 RSYNC_URL="rsync://satgnu.net/quake2world quake2world"
-RSYNC_OPTS="-avz --delete"
+RSYNC_OPTS="-avz --delete --progress"
 SUDO="/usr/bin/sudo"
 SVN="/usr/bin/svn"
 RSYNC="/usr/bin/rsync"
