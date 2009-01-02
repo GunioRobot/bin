@@ -1,7 +1,7 @@
 #!/bin/bash
 
-SUBVERSION_URL="svn://jdolan.dyndns.org/quake2world"
-RSYNC_URL="rsync://satgnu.net/quake2world quake2world"
+SUBVERSION_URL="svn://jdolan.dyndns.org/quake2world/trunk"
+RSYNC_URL="rsync://jdolan.dyndns.org/quake2world quake2world"
 RSYNC_OPTS="-avz --delete --progress"
 SUDO="/usr/bin/sudo"
 SVN="/usr/bin/svn"
@@ -19,7 +19,7 @@ function compile {
     ${SVN} co ${SUBVERSION_URL} quake2world
     cd quake2world
     autoreconf -i
-    ./configure
+    ./configure 
     make 
     ${SUDO} make install
 }
