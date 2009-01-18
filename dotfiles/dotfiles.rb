@@ -10,6 +10,7 @@ $verbose = false
 #TODO Rescue from some possible errors.
 #TODO Maybe use benchmark and time the process via optional parameter
 
+require 'rubygems'
 require 'Getopt/Declare'
 require 'net/scp'
 
@@ -36,25 +37,16 @@ if ARGV.empty?
   sync_dotfiles
 end
 
-specification = %q(
-  [tight]
-
-  -server <server>...      Process named file(s)
-                              { $servers = server.to_a }
-  -s <server>...     [ditto]
-
-  -dotfile <dotfile>...    Process named file(s)
-                              { $dotfiles = dotfile.to_a }
-  -d  <dotfile>...    [ditto]
-
-  -location  <location>     Process location
-                              { $location = location }
-  -l <location>       [ditto]
-
-  --verbose                 Verbose
+args = Getopt::Declare.new(<<'EOF')
+[tight]
+-s, -server <server>...      Process named file(s)
+                             { $servers = server.to_a }
+-d, -dotfile <dotfile>...    Process named file(s)
+                             { $dotfiles = dotfile.to_a }
+-l, -location  <location>    Process location
+                             { $location = location }
+--verbose                    Verbose
                              { $verbose = true }
-  )
+EOF
 
-
-args = Getopt::Declare.new(specification)
 sync_dotfiles
