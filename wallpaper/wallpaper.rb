@@ -2,7 +2,7 @@
 # vim: set sw=2 sts=2 et tw=80 :
 
 WALLPAPER="/home/gregf/.wallpaper/" # Full path no ~
-IMAGE_FORMATS="[.jpg,.gif,.png.,bmp]" # Keep this a string
+IMAGE_FORMATS="[.jpg,.gif,.png,.bmp]" # Keep this a string
 WALLPAPER_CMD="/usr/bin/feh" # Whatever command you use to set your wallpaper
 WPCMD_OPTIONS="--bg-scale" # Any options you need to pass to the above command
 DISPLAY=":0.0" # You can use ENV['DISPLAY'] here but, it wont work from a cronjob.
