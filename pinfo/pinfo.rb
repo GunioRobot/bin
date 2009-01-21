@@ -38,30 +38,30 @@ class PaludisInfo
   end
 
   def complete
-    status = log_reader(@COMPLETE)
-    outcome = status.last.match("[0-9]{1,3} of [0-9]{1,3}").to_s
+    complete ||= log_reader(@COMPLETE)
+    outcome = complete.last.match("[0-9]{1,3} of [0-9]{1,3}").to_s
     outcome = outcome.gsub("of", "")
     outcome = outcome.split(" ")
-    puts 100.0*outcome[0].to_i/outcome[1].to_i
+    100.0*outcome[0].to_i/outcome[1].to_i
   end
 
   def package
-    status = log_reader(@COMPLETE)
-    outcome = status.last.split(" ")
-    puts outcome[5]
+    package ||= log_reader(@COMPLETE)
+    outcome = package.last.split(" ")
+    outcome[5]
   end
 
   def status
-    status = log_reader(@COMPLETE)
+    status ||= log_reader(@COMPLETE)
     outcome = status.last.match("#{@ACTIONS}").to_s
-    puts adjectivize(outcome)
+    adjectivize(outcome)
   end
 
   def lastsync 
-    sync_date = log_reader(@STATUS)
+    sync_date ||= log_reader(@STATUS)
     lastline = sync_date.last.gsub("\n", "")
     unixtime = Time.at(lastline.to_i)
-    puts unixtime.strftime("%a, %b %d @ %I:%M%P")
+    unixtime.strftime("%a, %b %d @ %I:%M%P")
   end
 
   private
@@ -102,23 +102,27 @@ opts = GetoptLong.new(
       [ '--lastsync', '-l', GetoptLong::NO_ARGUMENT]
 )
 
+if ARGV.empty?
+  puts "You must pick a option. Try running #{__FILE__} --help"
+  exit 1
+end
+
 pinfo = PaludisInfo.new
 version = "0.1"
 opts.each do |opt, arg|
   case opt
     when '--help'
       RDoc::usage
-      exit 1
     when '--status'
-      pinfo.status
+      puts pinfo.status
     when '--package'
-      pinfo.package
+      puts pinfo.package
     when '--complete'
-      pinfo.complete
+      puts pinfo.complete
     when '--lastsync'
-      pinfo.lastsync
+      puts pinfo.lastsync
     when '--version'
       puts "#{version}"
-      exit 1
   end
 end
+
