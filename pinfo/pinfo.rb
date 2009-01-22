@@ -42,7 +42,7 @@ class PaludisInfo
     outcome = complete.last.match("[0-9]{1,3} of [0-9]{1,3}").to_s
     outcome = outcome.gsub("of", "")
     outcome = outcome.split(" ")
-    100.0*outcome[0].to_i/outcome[1].to_i
+    outcome = 100.0*outcome[0].to_i/outcome[1].to_i
   end
 
   def package
@@ -64,6 +64,10 @@ class PaludisInfo
     unixtime.strftime("%a, %b %d @ %I:%M%P")
   end
 
+  def gethelp
+    system("#{__FILE__} --help")
+  end
+
   private
 
   def log_reader(pattern)
@@ -80,7 +84,7 @@ class PaludisInfo
 
     return data
   end
-  
+ 
   def adjectivize(action)
     case action
     when "install": "installed"
@@ -92,7 +96,6 @@ class PaludisInfo
   end
 
 end
-
 opts = GetoptLong.new(
       [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
       [ '--version', '-v', GetoptLong::NO_ARGUMENT ],
@@ -102,27 +105,34 @@ opts = GetoptLong.new(
       [ '--lastsync', '-l', GetoptLong::NO_ARGUMENT]
 )
 
+pinfo ||= PaludisInfo.new
+version ||= "pinfo version: 0.2"
+
 if ARGV.empty?
-  puts "You must pick a option. Try running #{__FILE__} --help"
-  exit 1
+  pinfo.gethelp
 end
 
-pinfo = PaludisInfo.new
-version = "0.1"
-opts.each do |opt, arg|
-  case opt
-    when '--help'
-      RDoc::usage
-    when '--status'
-      puts pinfo.status
-    when '--package'
-      puts pinfo.package
-    when '--complete'
-      puts pinfo.complete
-    when '--lastsync'
-      puts pinfo.lastsync
-    when '--version'
-      puts "#{version}"
+begin
+  opts.each do |opt, arg|
+    case opt
+      when '--help'
+        RDoc::usage
+      when '--status'
+        puts pinfo.status
+      when '--package'
+        puts pinfo.package
+      when '--complete'
+        puts pinfo.complete
+      when '--lastsync'
+        puts pinfo.lastsync
+      when '--version'
+        puts "#{version}"
+      else
+        pinfo.gethelp
+    end
   end
+rescue GetoptLong::InvalidOption
+  pinfo.gethelp
 end
+
 
