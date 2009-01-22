@@ -30,6 +30,7 @@ require 'getoptlong'
 require 'rdoc/usage'
 
 class PaludisInfo
+  # Set some common strings
   def initialize
     @LOG_FILE = "/var/log/paludis.log"
     @STATUS   = "finished sync of repository gentoo"
@@ -37,6 +38,8 @@ class PaludisInfo
     @COMPLETE = "finished #{@ACTIONS} of package"
   end
 
+  # pinfo.complete
+  # prints the percentage complete out of all packages to be compiled.
   def complete
     complete ||= log_reader(@COMPLETE)
     outcome = complete.last.match("[0-9]{1,3} of [0-9]{1,3}").to_s
@@ -45,18 +48,25 @@ class PaludisInfo
     outcome = 100.0*outcome[0].to_i/outcome[1].to_i
   end
 
+  # pinfo.package
+  # Prints the current working package.
   def package
     package ||= log_reader(@COMPLETE)
     outcome = package.last.split(" ")
     outcome[5]
   end
 
+  # pinfo.status
+  # Prints the current action for a package, installed, cleaned, fetched,
+  # uninstalled
   def status
     status ||= log_reader(@COMPLETE)
     outcome = status.last.match("#{@ACTIONS}").to_s
     adjectivize(outcome)
   end
 
+  # pinfo.lastsync
+  # Prints the date and time of the last portage sync.
   def lastsync 
     sync_date ||= log_reader(@STATUS)
     lastline = sync_date.last.gsub("\n", "")
@@ -64,12 +74,17 @@ class PaludisInfo
     unixtime.strftime("%a, %b %d @ %I:%M%P")
   end
 
+  # pinfo.gethelp
+  # Displays the output of the --help option.
   def gethelp
     system("#{__FILE__} --help")
   end
 
   private
-
+  
+  # private log_reader
+  # Opens the logfile specified above, allowing it to grep for patterns used to
+  # pull out each methods requested information.
   def log_reader(pattern)
     data = %w[]
     if File.file?(@LOG_FILE) && File.readable?(@LOG_FILE)
@@ -84,7 +99,10 @@ class PaludisInfo
 
     return data
   end
- 
+  
+  # private adjectivize
+  # Besides the cool or terrible name it just aliases some actions to there
+  # adjective form.
   def adjectivize(action)
     case action
     when "install": "installed"
@@ -96,6 +114,8 @@ class PaludisInfo
   end
 
 end
+
+# Options for pinfo
 opts = GetoptLong.new(
       [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
       [ '--version', '-v', GetoptLong::NO_ARGUMENT ],
@@ -105,13 +125,18 @@ opts = GetoptLong.new(
       [ '--lastsync', '-l', GetoptLong::NO_ARGUMENT]
 )
 
+# Initialize PaludsInfo class
 pinfo ||= PaludisInfo.new
+
 version ||= "pinfo version: 0.2"
 
+# If no options were passed print the help.
 if ARGV.empty?
   pinfo.gethelp
 end
 
+# Call pinfo action for whatever was chosen.
+# If we hit a problem try running --help instead.
 begin
   opts.each do |opt, arg|
     case opt
