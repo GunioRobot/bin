@@ -80,7 +80,7 @@ class ImageMover
       img = "img_#{hour}#{minute}#{second}#{extension}"
 
       unless File.file?("#{file}") && File.readable?("#{file}")
-        puts "Error: #{file} is not a regular file or we don't have permissions"
+        $stderr.puts %Q{ #{file} is not a regular file or we don't have permissions. }
         exit
       end
       
@@ -112,7 +112,7 @@ class ImageMover
       elsif File.extname("#{file}") == ".tiff"
         @exif.push("#{EXIFR::TIFF.new("#{file}").date_time}")
       else
-        puts "EXIFR gem only supports jpeg and tiff images at this time."
+        $stderr.puts %Q{ The exifr gem only supports jpeg and tiff images at this time. }
         exit
       end
     end
