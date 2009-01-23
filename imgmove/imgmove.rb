@@ -121,13 +121,6 @@ class ImageMover
 
 end
 
-# gethelp
-# Displays the help screen if the user makes a typo
-def gethelp
-  system("#{__FILE__} --help")
-  exit
-end
-
 opts = GetoptLong.new(
       [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
       [ '--version', '-v', GetoptLong::NO_ARGUMENT ],
@@ -140,8 +133,8 @@ opts = GetoptLong.new(
 
 # if the user forgets to pass -s and -d show him the help
 if ARGV.empty?
-  gethelp  
-  exit
+  RDoc::usage
+  exit 1
 end
 
 # Set a few default values
@@ -171,7 +164,8 @@ begin
     end
   end
 rescue 
-  gethelp
+  RDoc::usage
+  exit 1
 end
 
 # Initiate the ImageMover class and pass some options into it from command line.
