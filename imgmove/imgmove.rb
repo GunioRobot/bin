@@ -1,14 +1,14 @@
 #!/usr/bin/env ruby
 #== Synopsis
 #
-# imgmove: Moves images from one location to another based on exif data
+# imgmove: Copy or move images from one location to another based on exif data
 #
 # = Usage
 #
 # imgmove [OPTION] ... SRCDIR DSTDIR
 #
 # -h --help
-#   show help
+#   Show this help screen
 #
 # -s --srcdir
 #   Location of images
@@ -20,7 +20,7 @@
 #   Move images instead of copy
 #
 # --verbose
-#   Be verbose verbose during copy or move
+#   Be verbose during copy or move
 #
 # -v --version
 #   Display current version
