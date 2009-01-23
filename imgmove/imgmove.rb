@@ -107,9 +107,9 @@ class ImageMover
     imgdata = find
     @exif = %w[]
     imgdata.each do |file|
-      if File.extname("#{file}") == ".jpg" or File.extname("#{file}") == ".jpeg"
+      if File.extname("#{file}") == ".jpg" or File.extname("#{file}") == ".jpeg" or File.extname("#{file}") == ".JPG" or File.extname("#{file}") == ".JPEG"
         @exif.push("#{EXIFR::JPEG.new("#{file}").date_time}")
-      elsif File.extname("#{file}") == ".tiff"
+      elsif File.extname("#{file}") == ".tiff" or File.extname("#{file}") == ".TIFF"
         @exif.push("#{EXIFR::TIFF.new("#{file}").date_time}")
       else
         $stderr.puts %Q{ The exifr gem only supports jpeg and tiff images at this time. }
