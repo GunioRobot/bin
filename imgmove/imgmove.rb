@@ -65,6 +65,7 @@ class ImageMover
   # to print out the srcdir and dstdir as it works.
   def copy_or_move
     get_exif.each do |file, date|
+
       date = Time.parse("#{date}")
       
       month = date.strftime("%b")
@@ -77,11 +78,20 @@ class ImageMover
       dir = "#{year}/#{month}"
       extension = File.extname(file)
       img = "img_#{hour}#{minute}#{second}#{extension}"
-      FileUtils.mkdir_p("#{@dstdir}/#{dir}", :mode => 0755)
+
+      unless File.file?("#{file}") && File.readable?("#{file}")
+        puts "Error: #{file} is not a regular file or we don't have permissions"
+        exit
+      end
+      
+      unless File.directory?("#{@dstdir}/#{dir}")
+        FileUtils.mkdir_p("#{@dstdir}/#{dir}", :mode => 0755)
+      end
+
       if @move
-        FileUtils.mv("#{file}", "#{@dstdir}/#{dir}/#{img}", :verbose => @verbose) 
+          FileUtils.mv("#{file}", "#{@dstdir}/#{dir}/#{img}", :verbose => @verbose)
       else
-        FileUtils.cp("#{file}", "#{@dstdir}/#{dir}/#{img}", :verbose => @verbose)
+          FileUtils.cp("#{file}", "#{@dstdir}/#{dir}/#{img}", :verbose => @verbose)
       end
     end
   end
@@ -97,7 +107,14 @@ class ImageMover
     imgdata = find
     @exif = %w[]
     imgdata.each do |file|
-      @exif.push("#{EXIFR::JPEG.new("#{file}").date_time}")
+      if File.extname("#{file}") == ".jpg" or File.extname("#{file}") == ".jpeg"
+        @exif.push("#{EXIFR::JPEG.new("#{file}").date_time}")
+      elsif File.extname("#{file}") == ".tiff"
+        @exif.push("#{EXIFR::TIFF.new("#{file}").date_time}")
+      else
+        puts "EXIFR gem only supports jpeg and tiff images at this time."
+        exit
+      end
     end
     return @exifdata = Hash[*imgdata.zip(@exif).flatten]
   end
