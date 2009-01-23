@@ -6,6 +6,7 @@
 # = Usage
 #
 # imgmove [OPTION] ... SRCDIR DSTDIR
+#
 # -h --help
 #   show help
 #
@@ -15,49 +16,149 @@
 # -d --dstdir
 #   Where to put images
 #
+# -m --move
+#   Move images instead of copy
+#
+# --verbose
+#   Be verbose verbose during copy or move
+#
 # -v --version
 #   Display current version
 
-BEGIN {$VERBOSE = true}
-require 'fileutils'
-require 'exifr'
-require 'getoptlong'
-require 'rdoc/usage'
+#BEGIN {$VERBOSE = true}
+
+# Load required gems
+%w[rubygems fileutils time exifr getoptlong rdoc/usage find].each { |lib| require lib }
+
+# class: ImageMover
+class ImageMover
+  
+  def initialize(srcdir, dstdir, move, verbose)
+    @IMG_EXTENSIONS = [".jpg", ".jpeg", ".tiff"]
+    @srcdir = srcdir
+    @dstdir = dstdir
+    @move = move
+    @verbose = verbose
+  end
+
+  # find
+  # Takes a srcdir and finds all images recursively. Stuffs them into the
+  # @images array.
+  # Note: Only formats supported by exifr are jpeg and tiff.
+  def find
+    @images = %w[]
+    Find.find(@srcdir) do |path|
+      next if File.directory?(path) or path == "."  or path == ".."
+      @IMG_EXTENSIONS.each do |ext|
+        next if File.extname(path) != "#{ext}"
+        @images.push("#{path}")
+      end
+    end
+    return @images
+  end
+
+  # copy_or_move
+  # Takes a hash fullpath/filename => date creates a dir based of strftime then
+  # copies or moves the files from srcdir to dstdir. 
+  #
+  # It will copy by default unless you pass --move to it. Also takes --verbose
+  # to print out the srcdir and dstdir as it works.
+  def copy_or_move
+    get_exif.each do |file, date|
+      date = Time.parse("#{date}")
+      
+      month = date.strftime("%b")
+      day = date.strftime("%a")
+      year = date.strftime("%Y")
+      hour = date.strftime("%H")
+      minute = date.strftime("%M")
+      second = date.strftime("%S")
+
+      dir = "#{year}/#{month}"
+      extension = File.extname(file)
+      img = "img_#{hour}#{minute}#{second}#{extension}"
+      FileUtils.mkdir_p("#{@dstdir}/#{dir}", :mode => 0755)
+      if @move
+        FileUtils.mv("#{file}", "#{@dstdir}/#{dir}/#{img}", :verbose => @verbose) 
+      else
+        FileUtils.cp("#{file}", "#{@dstdir}/#{dir}/#{img}", :verbose => @verbose)
+      end
+    end
+  end
+
+  # get_exif
+  # Uses exifr to get the data an image was taking.
+  #
+  # grabs an array from find(imgdata) and builds an array @exifdata based off
+  # the exif data returned from the files.
+  #
+  # It then mashes the two arrays into a hash @exifdata
+  def get_exif
+    imgdata = find
+    @exif = %w[]
+    imgdata.each do |file|
+      @exif.push("#{EXIFR::JPEG.new("#{file}").date_time}")
+    end
+    return @exifdata = Hash[*imgdata.zip(@exif).flatten]
+  end
+
+end
+
+# gethelp
+# Displays the help screen if the user makes a typo
+def gethelp
+  system("#{__FILE__} --help")
+  exit
+end
 
 opts = GetoptLong.new(
       [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
       [ '--version', '-v', GetoptLong::NO_ARGUMENT ],
+      [ '--move', '-m', GetoptLong::NO_ARGUMENT],
+      [ '--verbose', GetoptLong::NO_ARGUMENT],
       [ '--dstdir', '-d', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--srcdir', '-s', GetoptLong::REQUIRED_ARGUMENT ]
 
     )
 
-version = "0.1"
-dstdir = nil 
-srcdir = nil
-opts.each do |opt, arg|
-  case opt
-    when '--help'
-      RDoc::usage
-      exit 1
-    when '--dstdir'
-      dstdir = arg
-    when '--srcdir'
-      srcdir = arg
-    when '--version'
-      puts "#{version}"
-      exit 1
-  end
+# if the user forgets to pass -s and -d show him the help
+if ARGV.empty?
+  gethelp  
+  exit
 end
 
-if ARGV.empty? 
-  puts "Missing dir argument. Try --help"
-  exit 0
+# Set a few default values
+version = "0.1"
+srcdir = nil
+dstdir = nil
+move = false
+verbose = false
+begin
+  opts.each do |opt, arg|
+    case opt
+      when '--help'
+        RDoc::usage
+        exit 1
+      when '--dstdir'
+        dstdir = arg
+      when '--srcdir'
+        srcdir = arg
+      when '--move'
+        move = true
+      when '--verbose'
+        verbose = true
+      when '--version'
+        puts "#{version}"
+      else
+        gethelp
+    end
+  end
+rescue 
+  gethelp
 end
-=begin
-  1. Loop through src directory build array of images
-  2. for each file in array cp to dst/exifr_string
-  #TODO option for mv rather than cp
-=end
-puts "#{dstdir}"
-puts "#{srcdir}"
+
+# Initiate the ImageMover class and pass some options into it from command line.
+image = ImageMover.new(srcdir, dstdir, move, verbose)
+
+# Call copy_or_move on the srcdir and dstdir
+image.copy_or_move
