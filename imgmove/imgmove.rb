@@ -34,7 +34,7 @@
 class ImageMover
   
   def initialize(srcdir, dstdir, move, verbose)
-    @IMG_EXTENSIONS = [".jpg", ".jpeg", ".tiff"]
+    @IMG_EXTENSIONS = [".jpg", ".jpeg", ".tiff", ".JPG", ".JPEG", ".TIFF"]
     @srcdir = srcdir
     @dstdir = dstdir
     @move = move
