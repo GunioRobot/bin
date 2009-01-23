@@ -41,7 +41,7 @@ class PaludisInfo
   # pinfo.complete
   # prints the percentage complete out of all packages to be compiled.
   def complete
-    complete ||= log_reader(@COMPLETE)
+    complete = log_reader(@COMPLETE)
     outcome = complete.last.match("[0-9]{1,3} of [0-9]{1,3}").to_s
     outcome = outcome.gsub("of", "")
     outcome = outcome.split(" ")
@@ -51,7 +51,7 @@ class PaludisInfo
   # pinfo.package
   # Prints the current working package.
   def package
-    package ||= log_reader(@COMPLETE)
+    package = log_reader(@COMPLETE)
     outcome = package.last.split(" ")
     outcome[5]
   end
@@ -60,7 +60,7 @@ class PaludisInfo
   # Prints the current action for a package, installed, cleaned, fetched,
   # uninstalled
   def status
-    status ||= log_reader(@COMPLETE)
+    status = log_reader(@COMPLETE)
     outcome = status.last.match("#{@ACTIONS}").to_s
     adjectivize(outcome)
   end
@@ -68,7 +68,7 @@ class PaludisInfo
   # pinfo.lastsync
   # Prints the date and time of the last portage sync.
   def lastsync 
-    sync_date ||= log_reader(@STATUS)
+    sync_date = log_reader(@STATUS)
     lastline = sync_date.last.gsub("\n", "")
     unixtime = Time.at(lastline.to_i)
     unixtime.strftime("%a, %b %d @ %I:%M%P")
@@ -77,7 +77,8 @@ class PaludisInfo
   # pinfo.gethelp
   # Displays the output of the --help option.
   def gethelp
-    system("#{__FILE__} --help")
+    RDoc::usage
+    exit 1
   end
 
   private
