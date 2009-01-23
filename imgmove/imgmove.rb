@@ -138,7 +138,7 @@ if ARGV.empty?
 end
 
 # Set a few default values
-version = "0.1"
+version ||= "imgmove version: 0.1"
 srcdir = nil
 dstdir = nil
 move = false
@@ -169,7 +169,7 @@ rescue
 end
 
 # Initiate the ImageMover class and pass some options into it from command line.
-image = ImageMover.new(srcdir, dstdir, move, verbose)
+image ||= ImageMover.new(srcdir, dstdir, move, verbose)
 
 # Call copy_or_move on the srcdir and dstdir
 image.copy_or_move
