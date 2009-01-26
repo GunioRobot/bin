@@ -34,7 +34,7 @@
 class ImageMover
   
   def initialize(srcdir, dstdir, move, verbose)
-    @IMG_EXTENSIONS = [".jpg", ".jpeg", ".tiff", ".JPG", ".JPEG", ".TIFF"]
+    @IMG_EXTENSIONS = [ ".[jJ][pP][eE]?[gG]", ".[tT][iI][fF][fF]"]
     @srcdir = srcdir
     @dstdir = dstdir
     @move = move
@@ -49,8 +49,11 @@ class ImageMover
     @images = %w[]
     Find.find(@srcdir) do |path|
       @IMG_EXTENSIONS.each do |ext|
-        next if File.extname(path) != "#{ext}"
-        @images.push("#{path}")
+        if File.extname(path) =~ /#{ext}/
+          @images.push("#{path}")
+        else
+          next
+        end
       end
     end
     return @images
@@ -106,9 +109,9 @@ class ImageMover
     imgdata = find
     @exif = %w[]
     imgdata.each do |file|
-      if File.extname("#{file}") == ".jpg" or File.extname("#{file}") == ".jpeg" or File.extname("#{file}") == ".JPG" or File.extname("#{file}") == ".JPEG"
+      if File.extname("#{file}") =~ /.[jJ][pP][eE]?[gG]/ 
         @exif.push("#{EXIFR::JPEG.new("#{file}").date_time}")
-      elsif File.extname("#{file}") == ".tiff" or File.extname("#{file}") == ".TIFF"
+      elsif File.extname("#{file}") =~ /.[tT][iI][fF][fF]/
         @exif.push("#{EXIFR::TIFF.new("#{file}").date_time}")
       else
         $stderr.puts %Q{ The exifr gem only supports jpeg and tiff images at this time. }
