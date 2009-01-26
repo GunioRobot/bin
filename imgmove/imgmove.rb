@@ -48,7 +48,6 @@ class ImageMover
   def find
     @images = %w[]
     Find.find(@srcdir) do |path|
-      next if File.directory?(path) or path == "."  or path == ".."
       @IMG_EXTENSIONS.each do |ext|
         next if File.extname(path) != "#{ext}"
         @images.push("#{path}")
