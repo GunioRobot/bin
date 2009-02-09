@@ -5,6 +5,7 @@
 #TODO Check if we should user .ssh/config or provided info.
 #TODO try to get Escape.shell_command(["#{cmd}"]) going.
 
+require 'rubygems'
 require 'configatron'
 require 'net/ssh'
 require 'net/scp'
@@ -27,8 +28,8 @@ configatron.ssh.port = "159"
 # Set this to anything you want.
 configatron.tmpdir = ENV["TMP"] # No trailing slash!
 configatron.clean_tmpdir = true
-configatron.filename_date = "%m.%d.%y"
-configatron.directory_date = "%m.%Y"
+configatron.filename_date = "%I.%M.%S"
+configatron.directory_date = "%m.%d.%Y"
 configatron.filename = "desktop"
 
 # Do not touch anything below this line unless you know what your doing.
