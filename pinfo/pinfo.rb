@@ -96,6 +96,8 @@ class PaludisInfo
           end
         end
       end
+    else
+      $stderr.puts %Q{ Either #{@LOG_FILE} is not a file or we don't have permissions. }
     end
 
     return data
