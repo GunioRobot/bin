@@ -22,8 +22,10 @@ unless File.executable?("#{WALLPAPER_CMD}")
   exit
 end
 
+ENV["DISPLAY"] = "#{DISPLAY}"
+
 Dir.chdir("#{WALLPAPER}") do
   files = Dir.glob("*#{IMAGE_FORMATS}")
   random_file = rand(1-files.size)
-  IO.popen("DISPLAY='#{DISPLAY}' #{WALLPAPER_CMD} #{WPCMD_OPTIONS} #{files[random_file]}")
+  IO.popen("#{WALLPAPER_CMD} #{WPCMD_OPTIONS} #{files[random_file]}")
 end
