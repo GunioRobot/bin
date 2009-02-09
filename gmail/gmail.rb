@@ -6,38 +6,63 @@
 
 %w{rubygems daemons net/imap time}.each { |lib| require lib } 
 
-#TODO strip html from verbose messages
 #TODO make this use a class instead of purely functional
-#TODO probably shouldn't display anything if count is 0?
-#TODO ideas?
+#TODO detect if the daemon was stopped and report it
+#TODO only pass true to notify if required, options hash maybe?
 
 # Edit these
 @username = "username@gmail.com"
-@password = "yourpasword"
+@password = "yourpassword"
 @mailboxes = %w[INBOX family friends] #Takes an array of mailboxes you want to monitor
-@imapserver = "imap.gmail.com"
+@imapserver = "imap.gmail.comf"
 @imapport = "993" 
 @ssl = true # enable ssl?
 @limit = 5 # number of messages to display per inbox
-@image = "/home/gregf/gmail3.png" # path to gmail image or supply your own
+@image = "#{ENV['PWD']}/gmail.png" # path to gmail image or supply your own
 @display = ":0.0" # xorg display needed to run in the background
 @wait = 600 # Time to wait beetween checks in seconds
 @notify = "/usr/bin/notify-send" # path to notify-send
 @urgency = "low" # notify-send urgency level low|normal|critical
 @strftime = "%I:%M %p" # date format
-@verbose = false 
+@verbose = true
 
 def message(msg)
+  # Strip any html I have in there for notify-send
+  # Replace &lt and &gt; with <>
+  msg = msg.gsub(/<\/?[^>]*>/, "")
+  msg = msg.gsub(/&lt;/, "<")
+  msg = msg.gsub(/&gt;/, ">")
+  # if verbose is on print to stdout
   if @verbose
-    $stderr.puts %Q{ #{msg} }
+    $stdout.puts %Q{ #{msg} }
+  end
+end
+
+def notify(msg, image)
+  if image
+    system(%Q{#{@notify} -u #{@urgency} -i #{@image} "#{msg}"})
+  else
+    system(%Q{#{@notify} -u #{@urgency} "#{msg}"})
   end
 end
 
 def checkmail
   ENV["DISPLAY"] = @display
-  imap = Net::IMAP.new("#{@imapserver}", "#{@imapport}", @ssl)
+
+  begin
+    imap = Net::IMAP.new("#{@imapserver}", "#{@imapport}", @ssl)
+  rescue NameError, SocketError
+    raise "imap server or port wrong"
+  end
+
   message "Connecting to #{@imapserver} #{@imapport}"
-  imap.login(@username, @password)
+
+  begin
+    imap.login(@username, @password)
+  rescue Net::IMAP::NoResponseError
+    raise "Invalid username or password"
+  end
+
   message "Using #{@username} and password (hidden)"
   @mailboxes.each do |mbox|
     message "Checking for mail in: #{mbox}"
@@ -68,29 +93,36 @@ def checkmail
               data.push name + ":" + addr + ":" + subject
           end
       end
-    newmail = "<b>#{count}</b> new messages in <b>#{mbox}</b> as of #{Time.now.strftime(@strftime)}"
-    message newmail
-    %x["/usr/bin/notify-send" "-u" "normal" "-i" "#{@image}" "#{newmail}"]
-    data.each do |email|
-      email = email.split(":")
-      name = email[0]
-      addr = email[1]
-      subject = email[2]
-      message "\t#{name} #{addr} - #{subject}"
-      %x["#{@notify}" "-u" "#{@urgency}" "#{name} - #{addr}"]
-      unless subject.nil?
-        %x["#{@notify}" "-u" "#{@urgency}" "\t#{subject}"]
+    unless count <= 0
+      newmail = "<b>#{count}</b> new messages in <b>#{mbox}</b> as of #{Time.now.strftime(@strftime)}"
+      message newmail
+      notify("#{newmail}", true)
+      data.each do |email|
+        email = email.split(":")
+        name = email[0]
+        addr = email[1]
+        subject = email[2]
+        message "\t#{name} #{addr} - #{subject}"
+        notify("#{name} - #{addr}", false)
+        unless subject.nil?
+          notify("  #{subject}", false)
+        end
       end
     end
   end
 end
 
-
-Daemons.run_proc("#{__FILE__}") do
-  loop do
-    message "Firing up daemon and checking mail"
-    checkmail()
-    message "sleeping for #{@wait} seconds"
-    sleep(@wait)
+begin
+  Daemons.run_proc("#{__FILE__}") do
+    loop do
+      message "Firing up daemon and checking mail"
+      notify("#{__FILE__} has started up", true)
+      checkmail()
+      message "sleeping for #{@wait} seconds"
+      sleep(@wait)
+    end
   end
+rescue Interrupt
+  notify("#{__FILE__} has forcefully stopped", true)
+  message "Deamon was forcefully stopped"
 end
