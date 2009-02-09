@@ -6,10 +6,12 @@
 
 %w{rubygems daemons net/imap time}.each { |lib| require lib } 
 
-#TODO make this use a class instead of purely functional
 #TODO detect if the daemon was stopped and report it
 #TODO user filters for checkall mailboxes?
-#TODO found out why it crashes on gentoo-dev
+#FIXME find out why it crashes on gentoo-dev
+#TODO Refactor checkmail
+#TODO Rename class/program to something better. Ask mike.
+#TODO Seperate config file so password is not readable by all users.
 
 # Edit these
 $username = "username@gmail.com"
@@ -88,9 +90,10 @@ class Gmailer
   def list_mailboxes
     mlist = $imap.list("", "%")
     mlist.each do |mbox|
-      next if mbox[2] =~ /\[Gmail\]/i # this isn't realy a mailbox we never want to check it.
-      next if mbox[2] =~ /gentoo-dev/i # for some reason this is making it crash atm. 
-      $mailboxes.push(mbox[2].strip)
+      mbox = mbox[2] # 3rd item in array is the mailbox name
+      next if mbox =~ /\[Gmail\]/i # this isn't realy a mailbox we never want to check it.
+      next if mbox =~ /gentoo-dev/i # for some reason this is making it crash atm. 
+      $mailboxes.push(mbox.strip)
     end
     return $mailboxes.uniq.compact
   end
@@ -161,9 +164,9 @@ check = Gmailer.new
 
 begin
   Daemons.run_proc("#{__FILE__}") do
+    check.message "Firing up daemon and checking mail"
+    check.notify("#{__FILE__} has started up", true)
     loop do
-      check.message "Firing up daemon and checking mail"
-      check.notify("#{__FILE__} has started up", true)
       check.checkmail
       check.message "sleeping for #{$wait} seconds"
       sleep($wait)
