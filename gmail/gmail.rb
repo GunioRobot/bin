@@ -12,9 +12,9 @@
 
 # Edit these
 @username = "username@gmail.com"
-@password = "yourpassword"
+@password = "password"
 @mailboxes = %w[INBOX family friends] #Takes an array of mailboxes you want to monitor
-@imapserver = "imap.gmail.comf"
+@imapserver = "imap.gmail.com"
 @imapport = "993" 
 @ssl = true # enable ssl?
 @limit = 5 # number of messages to display per inbox
@@ -38,8 +38,16 @@ def message(msg)
   end
 end
 
-def notify(msg, image)
-  if image
+def notify(*args)
+  msg = args[0]
+  image = args[1] || false
+
+  if args.length > 2
+    $stderr.puts %Q{ Expecing 2 got #{args.length} for notify.}
+    exit
+  end
+
+  if image 
     system(%Q{#{@notify} -u #{@urgency} -i #{@image} "#{msg}"})
   else
     system(%Q{#{@notify} -u #{@urgency} "#{msg}"})
@@ -48,21 +56,17 @@ end
 
 def checkmail
   ENV["DISPLAY"] = @display
-
   begin
     imap = Net::IMAP.new("#{@imapserver}", "#{@imapport}", @ssl)
   rescue NameError, SocketError
     raise "imap server or port wrong"
   end
-
   message "Connecting to #{@imapserver} #{@imapport}"
-
   begin
     imap.login(@username, @password)
   rescue Net::IMAP::NoResponseError
     raise "Invalid username or password"
   end
-
   message "Using #{@username} and password (hidden)"
   @mailboxes.each do |mbox|
     message "Checking for mail in: #{mbox}"
@@ -103,9 +107,9 @@ def checkmail
         addr = email[1]
         subject = email[2]
         message "\t#{name} #{addr} - #{subject}"
-        notify("#{name} - #{addr}", false)
+        notify("#{name} - #{addr}")
         unless subject.nil?
-          notify("  #{subject}", false)
+          notify("  #{subject}")
         end
       end
     end
