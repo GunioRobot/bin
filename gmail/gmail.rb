@@ -8,12 +8,14 @@
 
 #TODO make this use a class instead of purely functional
 #TODO detect if the daemon was stopped and report it
-#TODO only pass true to notify if required, options hash maybe?
+#TODO user filters for checkall mailboxes?
+#TODO found out why it crashes on gentoo-dev
 
 # Edit these
 @username = "username@gmail.com"
 @password = "password"
 @mailboxes = %w[INBOX family friends] #Takes an array of mailboxes you want to monitor
+@checkall = false # WARNING: If this is set to true gmail.rb ignores @mailboxes array and monitors every mailbox on the server.
 @imapserver = "imap.gmail.com"
 @imapport = "993" 
 @ssl = true # enable ssl?
@@ -54,27 +56,43 @@ def notify(*args)
   end
 end
 
-def checkmail
-  ENV["DISPLAY"] = @display
+def init
   begin
-    imap = Net::IMAP.new("#{@imapserver}", "#{@imapport}", @ssl)
+    @imap = Net::IMAP.new("#{@imapserver}", "#{@imapport}", @ssl)
   rescue NameError, SocketError
     raise "imap server or port wrong"
   end
   message "Connecting to #{@imapserver} #{@imapport}"
   begin
-    imap.login(@username, @password)
+    @imap.login(@username, @password)
   rescue Net::IMAP::NoResponseError
     raise "Invalid username or password"
   end
   message "Using #{@username} and password (hidden)"
+end
+
+def list_mailboxes
+  mlist = @imap.list("", "%")
+  mlist.each do |mbox|
+    next if mbox[2] =~ /\[Gmail\]/i # this isn't realy a mailbox we never want to check it.
+    next if mbox[2] =~ /gentoo-dev/i # for some reason this is making it crash atm. 
+    @mailboxes.push(mbox[2].strip)
+  end
+  return @mailboxes.uniq.compact
+end
+
+def checkmail
+  ENV["DISPLAY"] = @display
+  if @checkall
+    @mailboxes = list_mailboxes
+  end
   @mailboxes.each do |mbox|
     message "Checking for mail in: #{mbox}"
-    imap.examine("#{mbox}")
+    @imap.examine("#{mbox}")
     data = []
     count = 0
-      imap.search(['UNSEEN']).each do |message_id|
-          env = imap.fetch(message_id, 'ENVELOPE')[0].attr['ENVELOPE']
+      @imap.search(['UNSEEN']).each do |message_id|
+          env = @imap.fetch(message_id, 'ENVELOPE')[0].attr['ENVELOPE']
 
           # Filter here, if you want.
           next if /SPAM/i.match(env.subject)
@@ -121,6 +139,7 @@ begin
     loop do
       message "Firing up daemon and checking mail"
       notify("#{__FILE__} has started up", true)
+      init()
       checkmail()
       message "sleeping for #{@wait} seconds"
       sleep(@wait)
