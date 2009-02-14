@@ -247,15 +247,14 @@ map = {
 }
 
 if ARGV.empty?
-  $stderr.puts "You must enter a country code to search for\n"
-  $stderr.puts "# ./whcctld.rb us"
-  exit 1
+  $stderr.puts %Q{You must enter a country code to search for.\n./whcctld.rb us}
+  exit 
 end
 
-if map["#{ARGV}"]
-  puts "#{ARGV} is " + map["#{ARGV}"] + ".\n"
-  exit 1
+if map["#{ARGV}"] then
+  $stdout.puts %Q{#{ARGV} is #{map["#{ARGV}"]}}
+  exit 
 elsif
-  puts "#{ARGV} does not exist.\n"
-  exit 1
+  $stderr.puts %Q{#{ARGV} does not exist.}
+  exit 
 end
