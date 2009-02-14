@@ -14,7 +14,7 @@ puts "\sHumidity: %s" % forecast.current.hmid
 puts "\sVisibility: %s" % forecast.current.vis
 puts "\sOutlook: %s" % forecast.current.outlook
 puts
-puts "\sTommorow:"
+puts "\sTomorrow:"
 puts
 puts "\sHigh: %s" % forecast.tomorrow.high
 puts "\sLow: %s" % forecast.tomorrow.low
