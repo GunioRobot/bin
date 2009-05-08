@@ -29,7 +29,7 @@ configatron.directory_format = "#{TIME.strftime("%m.%d.%Y")}"
 configatron.verbose = true
 # you can list databases to backup here or make an empty array to backup
 # everything.
-configatron.databases = %w[] 
+configatron.databases = %w[gregf_staging mysql] 
 # mysqldump options
 configatron.dump_options = "--compress --add-locks"
 # Do we archive the databases and cleanup?
@@ -121,11 +121,11 @@ def cleanup
 end
 
 # Archive the databases
-def archive_databases
+def archive_databases(db_list)
   say "Archiving databases:"
   if Dir.chdir("#{configatron.backup}/#{configatron.directory_format}") 
-    configatron.databases.each do |dir|
-      archive = "#{dir}-#{configatron.file_format}.#{configatron.compress.extension}"
+    db_list.each do |dir|
+      archive = "#{dir}-#{configatron.file_format}.#{configatron.compress_extension}"
       say("#{configatron.compress} #{configatron.compress_options} #{archive}", true)
       %x[#{configatron.compress} #{configatron.compress_options} #{archive} #{dir}]
     end
@@ -135,12 +135,21 @@ def archive_databases
   end
 end
 
+# Decide what database list we are using
+def which_list
+  if configatron.databases.empty? 
+    return database_list
+  else
+    return configatron.databases
+  end
+end
+
 # Print a status update if verbose is true, can set tab = true if you want to
 # tab input.
 def say(msg, tab=false)
   if configatron.verbose
     if tab
-      $stdout.puts "\t#{msg}"
+      $stdout.puts "\s\s#{msg}"
     else
       $stdout.puts "#{msg}"
     end
@@ -151,13 +160,9 @@ end
 def main
   check_directory(configatron.backup)
   writeable(configatron.backup)
-  if configatron.databases.empty?
-    dump_tables(database_list)
-  else
-    dump_tables(configatron.databases)
-  end
+  dump_tables(which_list)
   if configatron.archive
-    archive_databases
+    archive_databases(which_list)
     cleanup
   end
   fix_permissions(configatron.backup)
