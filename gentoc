@@ -1,0 +1,29 @@
+#!/bin/sh
+# Usage: env DATA=1 generate_toc.sh stuff.iso
+#        generate_toc.sh *.wav
+
+
+IFS="
+"
+[ "$DATA" = "" ] && DATA=0
+(
+  if [ $DATA -eq 1 ]
+  then
+    echo CD_ROM
+  else
+   echo CD_DA
+  fi
+  for file in $@
+  do
+    echo
+    if ( echo $file | grep '\.wav$' ) &>/dev/null
+    then
+      echo TRACK AUDIO
+      echo AUDIOFILE \"$file\" 0
+    else
+      echo TRACK MODE1
+      echo DATAFILE \"$file\"
+    fi
+  done
+) >cd.toc
+

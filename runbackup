@@ -1,0 +1,12 @@
+#!/bin/sh
+# Run this script at idle priority
+
+BACKUP_DIR="/storage/backups/"
+
+ionice -c3 -p$$
+
+if [[ -e $BACKUP_DIR ]]; then
+    nice -n 19 /usr/bin/rsnapshot -c /etc/rsnapshot/rsnapshot.conf $1
+else
+    echo "Backup directory doesn't exist!"
+fi

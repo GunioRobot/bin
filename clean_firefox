@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+MOZDIR="${HOME}/.mozilla"
+
+if `pgrep firefox 2>&1 > /dev/null`; then
+    echo "Please exit firefox and run again"
+    exit 1
+fi
+
+cd ${MOZDIR}
+
+for db in `find . -iname "*.sqlite*"`; do
+    echo "Cleaning ${db}"
+    sqlite3 ${db} VACUUM
+done

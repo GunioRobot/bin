@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+class Metadata
+
+def self.get(file)
+  command  = "mplayer -vo null -ao null -frames 0 -identify #{file}"
+  metadata = nil
+
+  Open3.popen3(command) do |input, output, error|
+    metadata = output.readlines.grep(/ID_.*/).collect {|name| name[3..name.length].split('=')}
+    metadata = metadata.inject({}) {|hash, (key, value)| hash[key.to_sym] = value.chomp; hash}
+  end
+
+  return metadata
+end
+
+end
+

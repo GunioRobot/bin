@@ -1,0 +1,4 @@
+#!/bin/bash
+
+#for FILE in *.flac; do flac -cd "${FILE}" | lame - "${FILE/.flac/.mp3}"; done
+for FILE in *.flac; do flac -cd "${FILE}" | lame --cbr --preset insane - "${FILE/.flac/.mp3}"; done

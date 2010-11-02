@@ -1,0 +1,7 @@
+#!/bin/sh
+
+for track in *.mp3
+do
+    mpg123 --cdr - "${track}" | wodim -v -tao -audio -pad -nofix -
+done
+wodim -fix

@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+
+if RUBY_VERSION < '1.9' then
+  require 'rubygems'
+end
+require 'fileutils'
+require 'find'
+require 'image_size'
+
+
+IMG_EXTENSIONS = [ "jpg", "jpeg", "png"]
+VERBOSE = true
+DEST = "/home/gregf/test"
+
+def find_images
+  images = %w[]
+  Find.find(Dir.pwd) do |path|
+    IMG_EXTENSIONS.each do |ext|
+      if File.extname(path) =~ /\.#{ext}$/i
+        images.push(File.expand_path(path))
+      else
+        next
+      end
+    end
+  end
+  return images
+end
+
+find_images.each do |fp|
+  File.open(fp, 'rb') do |fh|
+    size ||= ImageSize.new(fh.read).get_size
+    height ||= size[0]
+    width ||= size[1]
+    dir ||= "#{height}x#{width}"
+
+    unless Dir.exists?("#{dir}")
+      FileUtils.mkdir_p "#{File.join(DEST, dir)}"
+    end
+
+    if VERBOSE then
+      puts "#{fp} => #{File.join(DEST, dir)}"
+    end
+
+    FileUtils.cp "#{fp}", "#{File.join(DEST, dir)}"
+  end
+end

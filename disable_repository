@@ -1,0 +1,28 @@
+#!/bin/bash
+
+REPO="${1}"
+
+CONF_FILE="/etc/paludis/repositories/${REPO}.conf"
+DISABLED_FILE="/etc/paludis/repositories/${REPO}.conf.disabled"
+
+if [[ $UID -ne 0 ]]; then
+    echo "Must be root"
+    exit 1
+fi
+
+if [[ -z ${REPO} ]]; then
+    echo "Disable a single repository:"
+    echo "eg. ${0} mozilla"
+    exit 1
+fi
+
+if [[ -f ${CONF_FILE} ]]; then
+    echo "Disabling ${REPO}"
+    mv ${CONF_FILE} ${DISABLED_FILE}
+
+    echo "${CONF_FILE} Disabled"
+    exit 0
+else
+    echo "${CONF_FILE} could not be found"
+    exit 1
+fi

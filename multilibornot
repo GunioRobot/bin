@@ -1,0 +1,19 @@
+#!/bin/bash
+
+REPO_DIR="/var/db/paludis/repositories"
+
+cd $REPO_DIR
+
+for repo_name in *; do
+    cd $repo_name
+
+    if [[ -d $PWD/.git ]]; then
+        multi=`git branch -a | egrep multilib`
+        if [[ -n ${multi} ]]; then
+            echo "${repo_name} is multilib"
+            echo "  ${REPO_DIR}/${repo_name}.conf"
+        fi
+    fi
+
+    cd $REPO_DIR
+done

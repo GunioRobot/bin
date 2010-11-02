@@ -1,0 +1,16 @@
+#!/bin/bash
+
+REPO="${1}"
+
+CONF_FILE="/etc/paludis/repositories/${REPO}.conf"
+
+if [[ -z ${REPO} ]]; then
+    echo "Edit a single repository:"
+    echo "eg. ${0} arbor"
+    exit 1
+fi
+
+
+if [[ -f ${CONF_FILE} ]]; then
+    sudo vim ${CONF_FILE}
+fi

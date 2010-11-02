@@ -1,0 +1,61 @@
+#!/usr/bin/ruby
+# vim: set sw=2 sts=2 et tw=80 :
+# TODO Use Pow where possible
+# TODO convert {} to do |blah|
+# TODO verbose mode
+# TODO configatron
+# TODO custom match regex
+# TODO custom path
+# TODO option for allow redirects, but print a warning
+
+require 'rubygems'
+require 'ftools'
+require 'uri'
+require 'net/http'
+require 'rand'
+#require 'pow'
+
+matches = %w[]
+Dir['/home/gregf/.xchat2/scrollback/**/*'].each do |path|
+  if File.file?(path)
+    File.open(path, "r") do |fm|
+      fm.each_line do |line|
+        line = line.match('http:\/\/\w+:\w+@[a-zA-Z0-9._-]+[(\/+\w+)]+')
+        matches.push("#{line} ")
+      end
+    end
+  end
+end
+#matches = matches.uniq.shuffle
+matches = matches.uniq.sort
+
+matches.each do |url|
+  url = url.gsub("\n", "")
+  url = url.gsub(" ", "")
+  #url = URI.parse(url)
+  puts url
+#  if url.path.empty?
+    #url.path = "/"
+  #end
+
+
+#  begin 
+    #res = Net::HTTP.start(url.host) {|http|
+          #req = Net::HTTP::Get.new('url.path')
+          #req.basic_auth url.user, url.password
+          #response = http.request(req)
+    #}
+  #rescue Errno::EAFNOSUPPORT
+    #next
+  #rescue Errno::ETIMEDOUT
+    #next
+  #rescue Net::HTTPBadResponse
+    #next
+  #end
+  
+  #case res
+  #when Net::HTTPSuccess, Net::HTTPRedirection
+    #puts url
+  #end
+
+end

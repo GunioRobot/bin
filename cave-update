@@ -1,0 +1,53 @@
+#!/bin/sh
+
+LOCKFILE="/tmp/pupdate.lock"
+LOGFILE="/tmp/pupdate.log"
+CAVE="/usr/bin/cave"
+REMOVE_LOG=true
+
+die() {
+   echo ${1}
+   exit 1
+}
+
+if [[ -e "${LOCKFILE}" ]]; then
+    echo "$0 is already running or the lockfile was not removed properly"
+    echo "If you feel this is the case please rm ${LOCKFILE} and try again"
+    exit 1
+fi
+
+# Setup lockfile
+touch ${LOCKFILE} || die "Failed to creat lock file"
+
+# Clean up permissions
+echo "Sanitize Permissions"
+if [[ -f /etc/exherbo-release ]]; then
+    paludis_dirs=(/etc/paludis /var/tmp/paludis /var/cache/paludis /var/db/paludis)
+else
+    echo "Watcha Talking about Willis?"
+    exit 1
+fi
+for dir in ${paludis_dirs[@]}; do
+    chown -R paludisbuild:paludisbuild ${dir}
+    find ${dir} -type d -exec chmod g+wrx {} \;
+done
+
+echo "Installing Paludis"
+${CAVE} resolve -x sys-apps/paludis > ${LOGFILE}
+
+if [[ $? -ne 0 ]]; then
+    echo "Failed updating Paludis!"
+    echo "Please read the log" 
+    REMOVE_LOG=false
+fi
+
+echo "Syncing"
+${CAVE} sync
+echo "Priming Search Cache"
+${CAVE} search game # This just primes the cache
+
+# Clean up
+rm -f ${LOCKFILE}
+if [[ ${REMOVE_LOG} == true ]]; then
+    rm -f ${LOGFILE}
+fi

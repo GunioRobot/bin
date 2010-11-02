@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd ~/.minecraft || exit 1
+java -Xmx1024M -Xms800M \
+    -cp .:lib/jinput.jar:lib/lwjgl.jar:lib/lwjgl_util.jar:lib/wom.jar:lib/minecraft.jar:skin/:gui/:terrain/:Minecraft.jar \
+    net.minecraft.LauncherFrame

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+program=$*
+
+for file in *; do
+    ${program} ${file}
+done
+

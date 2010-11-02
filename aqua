@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+require 'optparse'
+
+abook = '~/.abook/addressbook'
+
+optparse = OptionParser.new do |opts|
+  opts.banner = 'usage: aqua [-f addressbook] term...'
+
+  opts.on('-f', '--file addressbook', 'Specify address book to use') do |file|
+    abook = file
+  end
+
+end
+
+begin
+  optparse.parse!
+rescue OptionParser::InvalidOption, OptionParser::MissingArgument => e
+  puts e
+  puts optparse
+  exit 1
+end
+
+search = []
+ARGV.each do |arg|
+  if /(\w+?)=(.+)/ =~ arg
+    key = $1
+    val = /#{$2}/i
+    search << lambda {|who| val =~ who[key]}
+  else
+    val = /#{arg}/i
+    search << lambda {|who| who.detect {|k,v| val =~ v}}
+  end
+end
+
+who = nil
+found = []
+File.open(File.expand_path abook).each do |line|
+  case line
+    when /^\s*$/
+      found << "#{who['email']}\t#{who['name']}\t#{who['notes']}" if who && who['email'] && search.all? {|s| s.call(who)}
+    when /^\[\d+\]/
+      who = {}
+    when /^(\w+?)=(.+)/
+      who[$1] = $2 if who
+  end
+end
+
+if found.size > 0
+  puts "#{found.size} found"
+  puts found
+else
+  puts "Not found"
+end

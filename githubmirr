@@ -1,0 +1,33 @@
+#!/bin/bash
+# github mirror script
+# @author Michael Klier <chi@chimeric.de>
+
+login=gregf
+token=c063595c9d2dca14f8115509cce8a228
+backup_dir=/storage/github
+
+api_url=http://github.com/api/v2/xml
+
+repos="$(wget --quiet --post-data="login=${login}&token=${token}" -O - ${api_url}/repos/show/${login} | xmlstarlet sel -T -t -m '//repository' -v name -o ' ')"
+
+[[ ! -d ${backup_dir} ]] && mkdir -p ${backup_dir}
+cd ${backup_dir}
+
+for repo in $repos;
+do
+    branches="$(wget --quiet --post-data="login=${login}&token=${token}" -O - ${api_url}/repos/show/${login}/${repo}/branches | xmlstarlet sel -T -t -m '//branches/*' -v 'name()' -o ' ')"
+
+    if [ ! -d ${repo} ]; then
+        git clone -o github git@github.com:${login}/${repo}.git ${repo}
+    fi
+
+    cd ${repo}
+    for branch in $branches;
+    do
+        git branch --track ${branch} github/${branch} 2>/dev/null
+        git pull github ${branch}
+    done
+    cd ${backup_dir}
+done
+
+# vim:ts=4:sw=4:et:enc=utf-8:

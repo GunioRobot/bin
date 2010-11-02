@@ -1,0 +1,29 @@
+#!/bin/sh
+
+if [[ $UID != 0 ]]; then
+    echo "Must run has root!"
+    exit 1
+fi
+
+unset GREP_OPTIONS
+
+FREEMEM_BEFORE=`grep -s "MemFree:" /proc/meminfo | awk -F" " '{ print $2 }'`
+
+echo "* Syncing Disks"
+sync
+
+echo "* Freeing pagecache"
+echo 1 > /proc/sys/vm/drop_caches
+
+echo "* Freeing dentries and inodes"
+echo 2 > /proc/sys/vm/drop_caches
+
+echo "* Freeing pagecache, dentries, and inodes"
+echo 3 > /proc/sys/vm/drop_caches
+
+FREEMEM_AFTER=`grep -s "MemFree:" /proc/meminfo | awk -F" " '{ print $2 }'`
+
+echo
+echo "Free Memory Before:   $((FREEMEM_BEFORE/1024))mB"
+echo "Free Memory After:    $((FREEMEM_AFTER/1024))mB"
+echo "Total Freed:          $(((FREEMEM_AFTER-$FREEMEM_BEFORE)/1024))mB"

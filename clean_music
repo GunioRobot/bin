@@ -1,0 +1,9 @@
+#!/bin/bash -x
+
+EXTS=("*.jpg" "*.nfo" "*.gif" "*.ini" "*.txt" "*.url" "*.m3u" "*.dat" "*.sfv" "*.htm*" ".DS_Store" "*.docx" "*.torrent" "*.tar.bz2" "*.bz2" "*.tar" "*.gz" "*.xz" "*.lzma" "*.rm" "*.avi" "*.mpg" "*.db", "*.log")
+
+cd /storage/music/ || exit 1
+
+for ext in ${EXTS[@]}; do
+    find . -iname "${ext}" -exec rm {} \; 
+done

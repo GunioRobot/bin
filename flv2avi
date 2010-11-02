@@ -1,0 +1,10 @@
+#!/bin/bash
+
+filename="${1}"
+new_filename="${filename%%flv}"
+
+ffmpeg -i "${filename}" -sameq -y "${new_filename}avi"
+
+if [[ $? = 0 ]]; then
+    rm ${filename}
+fi

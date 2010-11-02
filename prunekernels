@@ -1,0 +1,35 @@
+#!/usr/bin/ruby
+# vim: set sw=2 sts=2 et tw=80 :
+
+def get_kernel_list
+  kernel_list = %w[]
+  Dir['/lib/modules/*'].each do |dir|
+    kernel = File.basename(dir)
+    kernel_list.push("#{kernel} ")
+  end
+  return kernel_list
+end
+
+def get_current_kernel
+  return system('uname -r')
+end
+
+def kernels_to_keep(keep)
+  keep = keep.to_a
+  $all_kernels = get_kernel_list
+  keep.each do |km|
+    $all_kernels.each do |version|
+      puts "version #{version}"
+      puts "km #{km}"
+      if version != km
+        $all_kernels.delete(version)
+      end
+    end
+  end
+  puts $all_kernels
+end
+
+#get_current_kernel
+#get_kernel_list
+km = %w[2.6.26.5 2.6.27-rc5]
+kernels_to_keep(km)
