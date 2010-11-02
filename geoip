@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require 'hpricot'
+require 'open-uri'
+require 'socket'
+
+ips = ARGV.to_a
+
+ips.each do |line|
+  unless line =~ /^\d$/
+    line = Socket::getaddrinfo(line, 'www', nil, Socket::SOCK_STREAM)[0][2]
+  end
+  doc = Hpricot(open("http://ipinfodb.com/ip_query.php?ip=#{line}"))
+  (doc/'response').each do |el|
+    ip = (el/'ip').inner_html
+    country = (el/'countryname').inner_html
+    state = (el/'regionname').inner_html
+    city = (el/'city').inner_html
+    puts "#{ip},#{country},#{state},#{city}"
+  end
+end
