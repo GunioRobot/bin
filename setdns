@@ -21,10 +21,10 @@ if ARGV.to_s =~ /list/
     puts key
   end
 else
-  File.open('/etc/resolve.conf', 'w+') do |file|
+  File.open('/etc/resolv.conf', 'w+') do |file|
     DNS_SERVERS[ARGV[0].to_sym].each do |ip|
       file.puts "nameserver #{ip}"
     end
-    file.flush
+    #file.flush
   end
 end
